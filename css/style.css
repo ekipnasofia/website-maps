@@ -1,0 +1,77 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#map {
+  height: 100vh;
+  width: 100vw;
+}
+
+#map .legend {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+#map .legend .header {
+  margin: 0;
+}
+
+#map .legend-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#map .symbol {
+  display: inline-block;
+  height: 0.75rem;
+  width: 0.75rem;
+}
+
+#map .symbol.circle {
+  border-radius: 50%;
+}
+
+.pie-chart {
+  background: radial-gradient(
+      circle closest-side,
+      white 0,
+      white 60%,
+      transparent 63%,
+      transparent 78%,
+      white 0
+    ),
+    conic-gradient(
+      from 107deg,
+      #4e79a7 0,
+      #4e79a7 38%,
+      #f28e2c 0,
+      #f28e2c 61%,
+      #cccccc 0,
+      #cccccc 100%
+    );
+  position: relative;
+  height: 300px;
+  width: 300px;
+  margin: 0;
+  padding: 0;
+}
+.pie-chart figcaption {
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  font-size: smaller;
+  text-align: right;
+}
+.pie-chart span:after {
+  display: inline-block;
+  content: "";
+  width: 0.8em;
+  height: 0.8em;
+  margin-left: 0.4em;
+  height: 0.8em;
+  border-radius: 0.2em;
+  background: currentColor;
+}
