@@ -3,6 +3,7 @@
 ### Карти
 
 - [Жилищна собственост](https://ekipnasofia.github.io/website-maps/ownership.html)
+- [Градски единици](https://ekipnasofia.github.io/website-maps/g_spot.html)
 
 ### Разработка
 

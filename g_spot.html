@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Градски единици</title>
+  </head>
+  <body>
+    <!-- Leaflet.js -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+      crossorigin=""
+    />
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script
+      src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+      crossorigin=""
+    ></script>
+
+    <!-- Leaflet sidebar -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Turbo87/sidebar-v2@v0.4.0/css/leaflet-sidebar.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Turbo87/sidebar-v2@v0.4.0/js/leaflet-sidebar.min.js"></script>
+
+    <!-- Mustache -->
+    <script
+      src="https://www.unpkg.com/mustache@4.2.0/mustache.min.js"
+      crossorigin=""
+    ></script>
+
+    <!-- Site -->
+    <link rel="stylesheet" href="./css/style.css" />
+
+    <div id="sidebar" class="sidebar collapsed">
+      <!-- Nav tabs -->
+      <div class="sidebar-tabs">
+        <ul role="tablist">
+          <li>
+            <a href="#home" role="tab">i</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tab panes -->
+      <div class="sidebar-content">
+        <div class="sidebar-pane" id="home">
+          <h1 class="sidebar-header">
+            Градоустройствени единици
+            <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+          </h1>
+
+          <div id="views"></div>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="map" class="sidebar-map"></div>
+
+    <script type="module">
+      const config = {
+        views: {
+          position: "topright",
+          items: [
+            {
+              label: "Население",
+              items: [
+                {
+                  layer: "ownership",
+                  // attribute: "population",
+                  attribute: "owner_private",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [60, "yellow"],
+                      [70, "orange"],
+                      [80, "pink"],
+                      [90, "red"],
+                      [100, "brown"],
+                      [null, "gray"],
+                    ],
+                  },
+                },
+                {
+                  layer: "ownership",
+                  // attribute: "density",
+                  attribute: "owner_country",
+                  label: "Брой на обитатели",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "darkblue"],
+                      [10, "royalblue"],
+                      [20, "lightblue"],
+                    ],
+                  },
+                },
+              ],
+            },
+            {
+              label: "Образователна структура",
+              items: [
+                {
+                  layer: "ownership",
+                  // attribute: "kindergardens_count",
+                  attribute: "owner_municipality",
+                  label: "Брой на детските градини и ясли",
+                  description: "",
+                  legend: {
+                    items: [
+                      [0, "darkred"],
+                      [10, "red"],
+                      [20, "lightred"],
+                    ],
+                  },
+                },
+                {
+                  layer: "ownership",
+                  // attribute: "kindergardens_accessibility",
+                  attribute: "owner_other",
+                  label: "Пешеходен достъп до детски градини и ясли",
+                  description: "",
+                  legend: {
+                    items: [
+                      [0, "darkgray"],
+                      [10, "gray"],
+                      [20, "lightgray"],
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        mapBounds: [
+          [42.75, 23.45],
+          [42.6, 23.2],
+        ],
+        legend: {
+          fontFamily: "monospaced",
+          header: "Дял на частната собственост",
+          position: "bottomright",
+          items: [
+            {
+              value: 60,
+              symbol: "circle",
+              layer: "ownership",
+              label: "60%",
+              style: {
+                fillColor: "#f1eef6",
+              },
+            },
+            {
+              value: 65,
+              symbol: "circle",
+              layer: "ownership",
+              label: "60 - 65%",
+              style: {
+                fillColor: "#d0d1e6",
+              },
+            },
+            {
+              value: 70,
+              symbol: "circle",
+              layer: "ownership",
+              label: "65 - 70%",
+              style: {
+                fillColor: "#a6bddb",
+              },
+            },
+            {
+              value: 75,
+              symbol: "circle",
+              layer: "ownership",
+              label: "70 - 75%",
+              style: {
+                fillColor: "#74a9cf",
+              },
+            },
+            {
+              value: 80,
+              symbol: "circle",
+              layer: "ownership",
+              label: "75 - 80%",
+              style: {
+                fillColor: "#2b8cbe",
+              },
+            },
+            {
+              value: 85,
+              symbol: "circle",
+              layer: "ownership",
+              label: "80 - 85%",
+              style: {
+                fillColor: "#045a8d",
+              },
+            },
+            {
+              value: 90,
+              symbol: "circle",
+              layer: "ownership",
+              label: "85 - 90%",
+              style: {
+                fillColor: "#1111ee",
+              },
+            },
+          ],
+        },
+        layers: [
+          {
+            name: "basemap",
+            type: "tilelayer",
+            source: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+            options: {
+              maxZoom: 18,
+              minZoom: 11,
+              attribution:
+                '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            },
+          },
+          {
+            name: "ownership",
+            type: "geojson",
+            source: "./ownership.geojson",
+            styleBase: {
+              weight: 1,
+              opacity: 0.8,
+              color: "#000",
+              fillOpacity: 0.8,
+            },
+            styleHighlight: {
+              weight: 5,
+              color: "#f00",
+            },
+            styleProperty: "owner_private",
+            options: {},
+            popupTmpl: `
+              <h3>Разпределение на собствеността</h3>
+              {{f.properties.kvname}}
+              <figure class="pie-chart" style="
+                background: radial-gradient(
+                  circle closest-side,
+                  white 0,
+                  white 60%,
+                  transparent 63%,
+                  transparent 78%,
+                  white 0
+                ),
+                conic-gradient(
+                  from 0deg,
+                  #4e79a7 0,
+                  #4e79a7 {{f.properties.owner_private}}%,
+                  #f28e2c 0,
+                  #f28e2c calc({{f.properties.owner_private}}% + {{f.properties.owner_country}}%),
+                  #e15759 0,
+                  #e15759 calc({{f.properties.owner_private}}% + {{f.properties.owner_country}}% + {{f.properties.owner_municipality}}%),
+                  #cccccc 0,
+                  #cccccc 100%
+                );
+              ">
+              </figure>
+              <ul class="legend-items">
+                <li class="legend-item">
+                  <i class="symbol square" style="background-color: #4e79a7;"></i> {{f.properties.owner_private}}% частна
+                </li>
+                <li class="legend-item">
+                  <i class="symbol square" style="background-color: #f28e2c;"></i> {{f.properties.owner_country}}% държавна
+                </li>
+                <li class="legend-item">
+                  <i class="symbol square" style="background-color: #e15759;"></i> {{f.properties.owner_municipality}}% общинска
+                </li>
+                <li class="legend-item">
+                  <i class="symbol square" style="background-color: #cccccc;"></i> {{f.properties.owner_other}}% друга
+                </li>
+              </ul>
+            `,
+          },
+        ],
+      };
+
+      import init from "./js/g_spot.js";
+      init(config);
+    </script>
+  </body>
+</html>
