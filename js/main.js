@@ -36,7 +36,22 @@ export default async function init(config) {
       const geoJson = await fetch(layerConfig.source).then((resp) =>
         resp.json()
       );
-      layer = L.geoJSON(geoJson, layerConfig.options);
+      layer = L.geoJSON(geoJson, {
+        ...layerConfig.options,
+        onEachFeature: (f, fLayer) => {
+          if (layerConfig.styleHighlight) {
+            fLayer.on({
+              click: (event) => {
+                event.target.setStyle(layerConfig.styleHighlight);
+                layer.bringToFront();
+              },
+              popupclose: (event) => {
+                layer.resetStyle(event.target);
+              }
+            });
+          }
+        },
+      });
 
       if (layerConfig.styleProperty) {
         layer.setStyle(legendStyle(config, layerConfig));
