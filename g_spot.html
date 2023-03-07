@@ -62,7 +62,15 @@
 
     <script type="module">
       const config = {
-        districtsLayer: "districts",
+        filter: {
+          fromLayer: "sofia_districts",
+          boundsLayer: "sofia_districts",
+          labelAttribute: "obns_cyr",
+          valueAttribute: "obns_num",
+        },
+        legend: {
+          position: "bottomright",
+        },
         views: {
           position: "topright",
           items: [
@@ -70,47 +78,31 @@
               label: "Население",
               items: [
                 {
-                  layer: "ownership",
-                  // attribute: "population",
-                  attribute: "owner_private",
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
                   label: "Гъстота на населението",
                   description: "Данни: ГРАО 2020",
                   legend: {
                     items: [
-                      [60, "yellow"],
-                      [70, "orange"],
-                      [80, "pink"],
-                      [90, "red"],
-                      [100, "brown"],
-                      [null, "gray"],
+                      [10, "yellow"],
+                      [50, "orange"],
+                      [100, "pink"],
+                      [200, "red"],
+                      [500, "brown"],
+                      [1000, "brown"],
                     ],
                   },
                 },
                 {
-                  layer: "ownership",
-                  attribute: "dmn_prefid",
-                  label: "ID квартал 123",
-                  description: "Номер",
-                  legend: {
-                    items: [
-                      [2, "yellow", "2.5 - 3.9"],
-                      [4, "orange"],
-                      [6, "pink"],
-                      [8, "red"],
-                    ],
-                  },
-                },
-                {
-                  layer: "ownership",
-                  // attribute: "density",
-                  attribute: "owner_country",
+                  layer: "sofia_ge",
+                  attribute: "grao_nasel",
                   label: "Брой на обитатели",
                   description: "Данни: ГРАО 2020",
                   legend: {
                     items: [
-                      [0, "darkblue"],
-                      [10, "royalblue"],
-                      [20, "lightblue"],
+                      [1000, "darkblue"],
+                      [10000, "royalblue"],
+                      [100000, "lightblue"],
                     ],
                   },
                 },
@@ -120,30 +112,15 @@
               label: "Образователна структура",
               items: [
                 {
-                  layer: "ownership",
-                  // attribute: "kindergardens_count",
-                  attribute: "owner_municipality",
+                  layer: "sofia_ge",
+                  attribute: "dg_broi",
                   label: "Брой на детските градини и ясли",
                   description: "",
                   legend: {
                     items: [
-                      [0, "darkred"],
-                      [10, "red"],
-                      [20, "lightred"],
-                    ],
-                  },
-                },
-                {
-                  layer: "ownership",
-                  // attribute: "kindergardens_accessibility",
-                  attribute: "owner_other",
-                  label: "Пешеходен достъп до детски градини и ясли",
-                  description: "",
-                  legend: {
-                    items: [
-                      [0, "darkgray"],
-                      [10, "gray"],
-                      [20, "lightgray"],
+                      [3, "darkred"],
+                      [5, "red"],
+                      [10, "lightred"],
                     ],
                   },
                 },
@@ -155,76 +132,6 @@
           [42.75, 23.45],
           [42.6, 23.2],
         ],
-        legend: {
-          fontFamily: "monospaced",
-          header: "Дял на частната собственост",
-          position: "bottomright",
-          items: [
-            {
-              value: 60,
-              symbol: "circle",
-              layer: "ownership",
-              label: "60%",
-              style: {
-                fillColor: "#f1eef6",
-              },
-            },
-            {
-              value: 65,
-              symbol: "circle",
-              layer: "ownership",
-              label: "60 - 65%",
-              style: {
-                fillColor: "#d0d1e6",
-              },
-            },
-            {
-              value: 70,
-              symbol: "circle",
-              layer: "ownership",
-              label: "65 - 70%",
-              style: {
-                fillColor: "#a6bddb",
-              },
-            },
-            {
-              value: 75,
-              symbol: "circle",
-              layer: "ownership",
-              label: "70 - 75%",
-              style: {
-                fillColor: "#74a9cf",
-              },
-            },
-            {
-              value: 80,
-              symbol: "circle",
-              layer: "ownership",
-              label: "75 - 80%",
-              style: {
-                fillColor: "#2b8cbe",
-              },
-            },
-            {
-              value: 85,
-              symbol: "circle",
-              layer: "ownership",
-              label: "80 - 85%",
-              style: {
-                fillColor: "#045a8d",
-              },
-            },
-            {
-              value: 90,
-              symbol: "circle",
-              layer: "ownership",
-              label: "85 - 90%",
-              style: {
-                fillColor: "#1111ee",
-              },
-            },
-          ],
-        },
         layers: [
           {
             name: "basemap",
@@ -238,9 +145,12 @@
             },
           },
           {
-            name: "districts",
+            name: "sofia_districts",
             type: "geojson",
             source: "./data/sofia_districts.geojson",
+            filter: {
+              attribute: "obns_id"
+            },
             options: {
               style: {
                 weight: 2,
@@ -251,62 +161,22 @@
             },
           },
           {
-            name: "ownership",
+            name: "sofia_ge",
             type: "geojson",
-            source: "./ownership.geojson",
-            styleBase: {
-              weight: 1,
-              opacity: 0.8,
-              color: "#000",
-              fillOpacity: 0.8,
+            source: "./data/sofia_ge.geojson",
+            filter: {
+              attribute: "obns_id",
+              operator: "comma_list"
             },
-            styleHighlight: {
-              weight: 5,
-              color: "#f00",
+            options: {
+              style: {
+                weight: 1,
+                opacity: 1,
+                color: "#f00",
+                fillColor: "#0f0",
+                fillOpacity: 0.5,
+              }
             },
-            styleProperty: "owner_private",
-            options: {},
-            popupTmpl: `
-              <h3>Разпределение на собствеността и някакви други неща</h3>
-              {{f.properties.kvname}}
-              {{f.properties.dmn_prefid}}
-              <figure class="pie-chart" style="
-                background: radial-gradient(
-                  circle closest-side,
-                  white 0,
-                  white 60%,
-                  transparent 63%,
-                  transparent 78%,
-                  white 0
-                ),
-                conic-gradient(
-                  from 0deg,
-                  #4e79a7 0,
-                  #4e79a7 {{f.properties.owner_private}}%,
-                  #f28e2c 0,
-                  #f28e2c calc({{f.properties.owner_private}}% + {{f.properties.owner_country}}%),
-                  #e15759 0,
-                  #e15759 calc({{f.properties.owner_private}}% + {{f.properties.owner_country}}% + {{f.properties.owner_municipality}}%),
-                  #cccccc 0,
-                  #cccccc 100%
-                );
-              ">
-              </figure>
-              <ul class="legend-items">
-                <li class="legend-item">
-                  <i class="symbol square" style="background-color: #4e79a7;"></i> {{f.properties.owner_private}}% частна
-                </li>
-                <li class="legend-item">
-                  <i class="symbol square" style="background-color: #f28e2c;"></i> {{f.properties.owner_country}}% държавна
-                </li>
-                <li class="legend-item">
-                  <i class="symbol square" style="background-color: #e15759;"></i> {{f.properties.owner_municipality}}% общинска
-                </li>
-                <li class="legend-item">
-                  <i class="symbol square" style="background-color: #cccccc;"></i> {{f.properties.owner_other}}% друга
-                </li>
-              </ul>
-            `,
           },
         ],
       };

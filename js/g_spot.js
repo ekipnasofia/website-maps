@@ -28,7 +28,7 @@ const normalizeLegendItem = ([value, color, label]) => ({
   symbol: "circle",
   value,
   label: label ?? `< ${value}`,
-  style: { color },
+  style: { color, fillColor: color },
 });
 // ensures the legend configration is converted from array to objects like `{symbol, value, label, style: {}}`
 const normalizeLegendItems = (items) =>
@@ -97,7 +97,6 @@ const buildLegend = (viewConfig) => {
   return container;
 };
 
-
 const appendSelectOptions = (selectEl, selectOptions) => {
   for (const opt of selectOptions) {
     const option = L.DomUtil.create("option");
@@ -133,8 +132,10 @@ export default async function init(config) {
   const sidebar = L.control.sidebar("sidebar", { position: "right" });
   const mapState = {
     legendCollapsed: false,
+    filterValue: null,
   };
   const layersByName = {};
+  const geojsonByName = {};
   const controlsByName = {};
 
   sidebar.addTo(map);
@@ -152,17 +153,43 @@ export default async function init(config) {
   const getLayerConfig = (layerName) =>
     config.layers.find((layerConfig) => layerConfig.name === layerName);
 
+  const filterLayers = (value) => {
+    const filteredLayers = config.layers.filter(
+      (layerConfig) => !!layerConfig.filter
+    );
+
+    for (const layerConfig of filteredLayers) {
+      const lfLayer = layersByName[layerConfig.name];
+      const geoJson = geojsonByName[layerConfig.name];
+
+      lfLayer.clearLayers();
+      lfLayer.addData(geoJson);
+
+      if (layerConfig.name == config.filter.boundsLayer) {
+        map.fitBounds(lfLayer.getBounds());
+      }
+    }
+  };
+
   districtControl.onAdd = () => {
     const div = L.DomUtil.create("div");
     const select = L.DomUtil.create("select", "adm-unit", div);
 
-    appendSelectOptions(select, [{
-      value: -1,
-      label: 'Избор на район...',
-      disabled: true,
-      selected: true,
-    }]);
+    appendSelectOptions(select, [
+      {
+        value: -1,
+        label: "Избор на район...",
+        disabled: true,
+        selected: true,
+      },
+    ]);
     div.appendChild(select);
+
+    select.addEventListener("input", (event) => {
+      mapState.filterValue = parseInt(event.target.value);
+
+      filterLayers(parseInt(event.target.value));
+    });
 
     return div;
   };
@@ -241,27 +268,53 @@ export default async function init(config) {
   document.querySelector("#views").appendChild(addViews());
 
   for (const layerConfig of config.layers) {
-    let layer = null;
+    let lfLayer = null;
 
     if (layerConfig.type === "tilelayer") {
-      layer = L.tileLayer(layerConfig.source, layerConfig.options);
+      lfLayer = L.tileLayer(layerConfig.source, layerConfig.options);
     } else if (layerConfig.type === "geojson") {
       const geoJson = await fetch(layerConfig.source).then((resp) =>
         resp.json()
       );
-      layer = L.geoJSON(geoJson, {
+
+      geojsonByName[layerConfig.name] = geoJson;
+
+      lfLayer = L.geoJSON(geoJson, {
         ...layerConfig.options,
         onEachFeature: (f, fLayer) => {
+          // `styleHighlight` is the style applied when a feature is click and the original style is restored when the popup is closed
           if (layerConfig.styleHighlight) {
             fLayer.on({
               click: (event) => {
                 event.target.setStyle(layerConfig.styleHighlight);
-                layer.bringToFront();
+                lfLayer.bringToFront();
               },
               popupclose: (event) => {
-                layer.resetStyle(event.target);
+                lfLayer.resetStyle(event.target);
               },
             });
+          }
+        },
+        // Note: dynamically changing the filter option will have effect only on newly added data. It will not re-evaluate already included features.
+        filter: (f) => {
+          // the layer is not configured with filter, so render all features
+          if (!layerConfig.filter) return true;
+          // the filter has no selected value, so render all features
+          if (mapState.filterValue == null) return true;
+
+          // check if the the filter value equals to the value of the layer's filter attribute
+          // 1) where the filter attribute contains a list of values, e.g. `1, 2, 3`
+          if (layerConfig.filter.operator === "comma_list") {
+            const valueStr = f.properties[layerConfig.filter.attribute];
+            const valueArr = valueStr.split(",").map((v) => parseInt(v.trim()));
+
+            return valueArr.includes(mapState.filterValue);
+          } else {
+            // 2) or where the filter attribute contains the filter value directly, e.g. `1`
+            return (
+              mapState.filterValue ===
+              f.properties[layerConfig.filter.attribute]
+            );
           }
         },
       });
@@ -271,25 +324,29 @@ export default async function init(config) {
       // }
 
       if (layerConfig.popupTmpl) {
-        layer.bindPopup((event) =>
+        lfLayer.bindPopup((event) =>
           Mustache.render(layerConfig.popupTmpl, { f: event.feature })
         );
       }
 
-      if (layerConfig.name === config.districtsLayer) {
+      // if the map supports filtering, fill the filter dropdown with values
+      if (config.filter && layerConfig.name === config.filter.fromLayer) {
         const options = geoJson.features.map((f) => ({
-          label: f.properties["obns_cyr"],
-          value: f.obns_num,
+          label: f.properties[config.filter.labelAttribute],
+          value: f.properties[config.filter.valueAttribute],
         }));
 
-        appendSelectOptions(districtControl._container.querySelector("select"), options);
+        appendSelectOptions(
+          districtControl._container.querySelector("select"),
+          options
+        );
       }
     } else {
       throw new Error("Unknown layer type: " + layerConfig.type);
     }
 
-    layer.addTo(map);
+    lfLayer.addTo(map);
 
-    layersByName[layerConfig.name] = layer;
+    layersByName[layerConfig.name] = lfLayer;
   }
 }
