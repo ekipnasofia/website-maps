@@ -87,6 +87,20 @@
                 },
                 {
                   layer: "ownership",
+                  attribute: "dmn_prefid",
+                  label: "ID квартал",
+                  description: "Номер",
+                  legend: {
+                    items: [
+                      [2, "yellow", "2.5 - 3.9"],
+                      [4, "orange"],
+                      [6, "pink"],
+                      [8, "red"],
+                    ],
+                  },
+                },
+                {
+                  layer: "ownership",
                   // attribute: "density",
                   attribute: "owner_country",
                   label: "Брой на обитатели",
@@ -241,6 +255,7 @@
             popupTmpl: `
               <h3>Разпределение на собствеността123</h3>
               {{f.properties.kvname}}
+              {{f.properties.dmn_prefid}}
               <figure class="pie-chart" style="
                 background: radial-gradient(
                   circle closest-side,
