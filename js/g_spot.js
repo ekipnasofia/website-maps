@@ -128,8 +128,9 @@ L.control.legend = function (opts) {
 
 export default async function init(config) {
   const map = L.map("map", { zoomControl: false }).fitBounds(config.mapBounds);
-  const districtControl = L.control({ position: "topleft" });
-  const sidebar = L.control.sidebar("sidebar", { position: "right" });
+  const lfFilterControl = L.control({ position: "topleft" });
+  const lfZoomControl = L.control.zoom({ position: 'topleft' });
+  const lfSidebarControl = L.control.sidebar("sidebar", { position: "right" });
   const mapState = {
     legendCollapsed: false,
     filterValue: null,
@@ -138,7 +139,7 @@ export default async function init(config) {
   const geojsonByName = {};
   const controlsByName = {};
 
-  sidebar.addTo(map);
+  lfSidebarControl.addTo(map);
 
   const getViewConfig = (attribute) => {
     for (const viewItem of config.views.items) {
@@ -171,7 +172,7 @@ export default async function init(config) {
     }
   };
 
-  districtControl.onAdd = () => {
+  lfFilterControl.onAdd = () => {
     const div = L.DomUtil.create("div");
     const select = L.DomUtil.create("select", "adm-unit", div);
 
@@ -193,7 +194,8 @@ export default async function init(config) {
 
     return div;
   };
-  districtControl.addTo(map);
+  lfFilterControl.addTo(map);
+  lfZoomControl.addTo(map);
 
   const addViews = () => {
     const div = L.DomUtil.create("div", "view");
@@ -337,7 +339,7 @@ export default async function init(config) {
         }));
 
         appendSelectOptions(
-          districtControl._container.querySelector("select"),
+          lfFilterControl._container.querySelector("select"),
           options
         );
       }
