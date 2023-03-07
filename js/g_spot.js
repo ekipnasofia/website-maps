@@ -97,6 +97,19 @@ const buildLegend = (viewConfig) => {
   return container;
 };
 
+
+const appendSelectOptions = (selectEl, selectOptions) => {
+  for (const opt of selectOptions) {
+    const option = L.DomUtil.create("option");
+
+    option.value = opt.value;
+    option.innerHTML = opt.label;
+    option.disabled = !!opt.disabled;
+    option.selected = !!opt.selected;
+    selectEl.appendChild(option);
+  }
+};
+
 L.Control.Legend = L.Control.extend({
   onAdd(map) {
     const div = buildLegend(this.options.viewConfig);
@@ -115,8 +128,8 @@ L.control.legend = function (opts) {
 };
 
 export default async function init(config) {
-  const map = L.map("map", { zoomControl: false, }).fitBounds(config.mapBounds);
-  const adminUnit = L.control({ position: "topleft" });
+  const map = L.map("map", { zoomControl: false }).fitBounds(config.mapBounds);
+  const districtControl = L.control({ position: "topleft" });
   const sidebar = L.control.sidebar("sidebar", { position: "right" });
   const mapState = {
     legendCollapsed: false,
@@ -139,38 +152,21 @@ export default async function init(config) {
   const getLayerConfig = (layerName) =>
     config.layers.find((layerConfig) => layerConfig.name === layerName);
 
-  adminUnit.onAdd = () => {
+  districtControl.onAdd = () => {
     const div = L.DomUtil.create("div");
-    const select = L.DomUtil.create("select", 'adm-unit', div);
-    const opts = [
-      {
-        value: -1,
-        label: "Столичен район...",
-        disabled: true,
-        selected: true,
-      },
-      {
-        value: 1,
-        label: "Дружба",
-      },
-      {
-        value: 2,
-        label: "Младост",
-      },
-    ];
+    const select = L.DomUtil.create("select", "adm-unit", div);
 
-    for (const opt of opts) {
-      const option = L.DomUtil.create("option");
-      option.value = opt.value;
-      option.innerHTML = opt.label;
-      option.disabled = !!opt.disabled;
-      option.selected = !!opt.selected;
-      select.appendChild(option);
-    }
+    appendSelectOptions(select, [{
+      value: -1,
+      label: 'Избор на район...',
+      disabled: true,
+      selected: true,
+    }]);
+    div.appendChild(select);
 
     return div;
   };
-  adminUnit.addTo(map);
+  districtControl.addTo(map);
 
   const addViews = () => {
     const div = L.DomUtil.create("div", "view");
@@ -223,7 +219,8 @@ export default async function init(config) {
 
         if (controlsByName["legend"]) {
           // TODO find a better way to get and store the state of the legend
-          mapState.legendCollapsed = controlsByName["legend"]._container.classList.contains("collapsed");;
+          mapState.legendCollapsed =
+            controlsByName["legend"]._container.classList.contains("collapsed");
           controlsByName["legend"].remove();
         }
 
@@ -277,6 +274,15 @@ export default async function init(config) {
         layer.bindPopup((event) =>
           Mustache.render(layerConfig.popupTmpl, { f: event.feature })
         );
+      }
+
+      if (layerConfig.name === config.districtsLayer) {
+        const options = geoJson.features.map((f) => ({
+          label: f.properties["obns_cyr"],
+          value: f.obns_num,
+        }));
+
+        appendSelectOptions(districtControl._container.querySelector("select"), options);
       }
     } else {
       throw new Error("Unknown layer type: " + layerConfig.type);
