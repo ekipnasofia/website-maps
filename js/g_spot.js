@@ -134,6 +134,7 @@ export default async function init(config) {
   const mapState = {
     legendCollapsed: false,
     filterValue: null,
+    currentView: null,
   };
   const layersByName = {};
   const geojsonByName = {};
@@ -239,7 +240,9 @@ export default async function init(config) {
 
     div.querySelectorAll('input[type="radio"]').forEach((radioEl) => {
       radioEl.addEventListener("change", (event) => {
-        const viewConfig = getViewConfig(event.target.value);
+        mapState.currentView = event.target.value;
+
+        const viewConfig = getViewConfig(mapState.currentView);
         const layerConfig = getLayerConfig(viewConfig.layer);
 
         layersByName[viewConfig.layer].setStyle(
@@ -292,7 +295,15 @@ export default async function init(config) {
                 lfLayer.bringToFront();
               },
               popupclose: (event) => {
-                lfLayer.resetStyle(event.target);
+                if (mapState.currentView == null) {
+                  lfLayer.resetStyle(event.target);
+                } else {
+                  const viewConfig = getViewConfig(mapState.currentView);
+
+                  lfLayer.setStyle(
+                    viewStyle(viewConfig, layerConfig)
+                  );
+                }
               },
             });
           }
