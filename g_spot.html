@@ -177,6 +177,17 @@
                 fillOpacity: 0.5,
               }
             },
+            popupTmpl: `
+              {{f.properties.regname}}, {{f.properties.rajon}}
+
+              <table>
+                <tr>
+                  <td>
+                    Население: {{f.properties.grao_nasel}}
+                  </td>
+                </tr>
+              </table>
+            `
           },
         ],
       };
