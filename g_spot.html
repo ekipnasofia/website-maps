@@ -63,8 +63,8 @@
     <script type="module">
       const config = {
         filter: {
-          fromLayer: "sofia_districts",
-          boundsLayer: "sofia_districts",
+          fromLayer: "sofia_rajoni",
+          boundsLayer: "sofia_rajoni",
           labelAttribute: "obns_cyr",
           valueAttribute: "obns_num",
         },
@@ -145,9 +145,9 @@
             },
           },
           {
-            name: "sofia_districts",
+            name: "sofia_rajoni",
             type: "geojson",
-            source: "./data/sofia_districts.geojson",
+            source: "./data/sofia_rajoni.geojson",
             filter: {
               attribute: "obns_id"
             },
