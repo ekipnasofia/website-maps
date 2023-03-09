@@ -292,7 +292,7 @@ export default async function init(config) {
             fLayer.on({
               click: (event) => {
                 event.target.setStyle(layerConfig.styleHighlight);
-                lfLayer.bringToFront();
+                fLayer.bringToFront();
               },
               popupclose: (event) => {
                 if (mapState.currentView == null) {
