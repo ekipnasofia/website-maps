@@ -191,6 +191,15 @@ export default async function init(config) {
       mapState.filterValue = Number.isNaN(filterValue) ? null : filterValue;
 
       filterLayers();
+
+      if (mapState.currentView) {
+        const viewConfig = getViewConfig(mapState.currentView);
+        const layerConfig = getLayerConfig(viewConfig.layer);
+
+        layersByName[viewConfig.layer].setStyle(
+          viewStyle(viewConfig, layerConfig)
+        );
+      }
     });
 
     return div;
