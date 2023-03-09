@@ -155,7 +155,7 @@ export default async function init(config) {
   const getLayerConfig = (layerName) =>
     config.layers.find((layerConfig) => layerConfig.name === layerName);
 
-  const filterLayers = (value) => {
+  const filterLayers = () => {
     const filteredLayers = config.layers.filter(
       (layerConfig) => !!layerConfig.filter
     );
@@ -190,7 +190,7 @@ export default async function init(config) {
       const filterValue = parseInt(event.target.value);
       mapState.filterValue = Number.isNaN(filterValue) ? null : filterValue;
 
-      filterLayers(filterValue);
+      filterLayers();
     });
 
     return div;
