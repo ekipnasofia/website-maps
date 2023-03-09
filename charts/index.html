@@ -1,0 +1,78 @@
+<script type="module">
+  import chartManager from "./charts/chartManager.js";
+
+  function renderChart() {
+    // TODO add renderNext / renderPrevious chart methods
+    const data = {{{data}}}
+    chartManager.renderNextChart(data);
+  }
+
+  chartManager.renderInitialChart({{{data}}})
+  window.renderChart = renderChart;
+</script>
+
+<div id="chart_popup_content">
+  <button class="chart_navigation_arrow" id="chart_navigation_arrow_left">
+    <
+  </button>
+  <div id="chart_card">
+    <h3>"От колко време живеете в този квартал?"</h3>
+    <div id="chart_container"></div>
+  </div>
+  <button
+    class="chart_navigation_arrow"
+    id="chart_navigation_arrow_right"
+    onclick="renderChart()"
+  >
+    >
+  </button>
+</div>
+
+<style>
+
+  /* TODO Clean CSS here */
+  .leaflet-popup-content-wrapper {
+    display: flex;
+  }
+
+  .leaflet-popup-content {
+    display: flex;
+  }
+
+  #chart_popup_content {
+    display: flex;
+  }
+
+  #chart_card {
+    text-align: center;
+  }
+
+  #chart_container {
+    height: 300px;
+    width: 500px;
+  }
+
+  .chart_navigation_arrow {
+    color: black;
+    border: 1px solid white;
+    padding: 10px;
+    margin: 1rem;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    box-sizing: border-box;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .chart_navigation_arrow:hover {
+    border: 1px solid black;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+</style>

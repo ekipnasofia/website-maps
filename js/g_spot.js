@@ -129,7 +129,7 @@ L.control.legend = function (opts) {
 export default async function init(config) {
   const map = L.map("map", { zoomControl: false }).fitBounds(config.mapBounds);
   const lfFilterControl = L.control({ position: "topleft" });
-  const lfZoomControl = L.control.zoom({ position: 'topleft' });
+  const lfZoomControl = L.control.zoom({ position: "topleft" });
   const lfSidebarControl = L.control.sidebar("sidebar", { position: "right" });
   const mapState = {
     legendCollapsed: false,
@@ -309,9 +309,7 @@ export default async function init(config) {
                 } else {
                   const viewConfig = getViewConfig(mapState.currentView);
 
-                  lfLayer.setStyle(
-                    viewStyle(viewConfig, layerConfig)
-                  );
+                  lfLayer.setStyle(viewStyle(viewConfig, layerConfig));
                 }
               },
             });
@@ -346,9 +344,12 @@ export default async function init(config) {
       // }
 
       if (layerConfig.popupTmpl) {
-        lfLayer.bindPopup((event) =>
-          Mustache.render(layerConfig.popupTmpl, { f: event.feature })
-        );
+        lfLayer.bindPopup((event) => {
+          const rendered = Mustache.render(loadChartsTemplate(), {
+            data: JSON.stringify(event.feature.properties),
+          });
+          return document.createRange().createContextualFragment(rendered);
+        });
       }
 
       // if the map supports filtering, fill the filter dropdown with values
@@ -371,4 +372,11 @@ export default async function init(config) {
 
     layersByName[layerConfig.name] = lfLayer;
   }
+}
+
+function loadChartsTemplate() {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "charts/index.html", false);
+  xhr.send();
+  return xhr.responseText;
 }
