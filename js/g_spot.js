@@ -179,18 +179,18 @@ export default async function init(config) {
 
     appendSelectOptions(select, [
       {
-        value: -1,
-        label: "Избор на район...",
-        disabled: true,
+        value: "",
+        label: "Всички райони",
         selected: true,
       },
     ]);
     div.appendChild(select);
 
     select.addEventListener("input", (event) => {
-      mapState.filterValue = parseInt(event.target.value);
+      const filterValue = parseInt(event.target.value);
+      mapState.filterValue = Number.isNaN(filterValue) ? null : filterValue;
 
-      filterLayers(parseInt(event.target.value));
+      filterLayers(filterValue);
     });
 
     return div;
