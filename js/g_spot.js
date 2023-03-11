@@ -1,3 +1,5 @@
+import chartManager from "../charts/chartManager.js"
+
 const legendStyle = (config, layerConfig) => (f) => {
   const value = f.properties[layerConfig.styleProperty];
   const legendItems = config.legend.items.filter(
@@ -131,6 +133,7 @@ export default async function init(config) {
   const lfFilterControl = L.control({ position: "topleft" });
   const lfZoomControl = L.control.zoom({ position: "topleft" });
   const lfSidebarControl = L.control.sidebar("sidebar", { position: "right" });
+
   const mapState = {
     legendCollapsed: false,
     filterValue: null,
@@ -345,13 +348,24 @@ export default async function init(config) {
 
       if (layerConfig.popupTmpl) {
         lfLayer.bindPopup((event) => {
-          const rendered = Mustache.render(loadChartsTemplate(), {
-            data: JSON.stringify(event.feature.properties),
-          });
-          return document.createRange().createContextualFragment(rendered);
+          // const rendered = Mustache.render(loadChartsTemplate(), {
+          //   data: JSON.stringify(event.feature.properties),
+          // });
+          // return document.createRange().createContextualFragment(rendered);
+          // toggleSidebar();
+          // toggleSidebar()
+
+          chartManager.renderCharts(event.feature.properties)
+          lfSidebarControl.open("stats")
+          return Mustache.render(layerConfig.popupTmpl, { f: event.feature });
+        });
+
+        lfLayer.getPopup().on("remove", () => {
+          lfSidebarControl.close()
         });
       }
 
+      
       // if the map supports filtering, fill the filter dropdown with values
       if (config.filter && layerConfig.name === config.filter.fromLayer) {
         const options = geoJson.features.map((f) => ({
@@ -380,3 +394,5 @@ function loadChartsTemplate() {
   xhr.send();
   return xhr.responseText;
 }
+
+
