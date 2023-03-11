@@ -64,7 +64,7 @@
       const config = {
         filter: {
           fromLayer: "sofia_rajoni",
-          boundsLayer: "sofia_rajoni",
+          boundsLayer: "sofia_ge",
           labelAttribute: "obns_cyr",
           valueAttribute: "id",
         },
@@ -166,9 +166,9 @@
             name: "sofia_rajoni",
             type: "geojson",
             source: "./data/sofia_rajoni.geojson",
-            filter: {
-              attribute: "id"
-            },
+            // filter: {
+            //   attribute: "id"
+            // },
             styleHighlight: {
               weight: 5,
               color: '#f00',
