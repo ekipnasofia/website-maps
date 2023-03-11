@@ -145,32 +145,12 @@
             },
           },
           {
-            name: "sofia_rajoni",
-            type: "geojson",
-            source: "./data/sofia_rajoni.geojson",
-            filter: {
-              attribute: "id"
-            },
-            options: {
-              style: {
-                weight: 2,
-                opacity: 1,
-                color: "#000",
-                fillOpacity: 0,
-              }
-            },
-          },
-          {
             name: "sofia_ge",
             type: "geojson",
             source: "./data/sofia_ge.geojson",
             filter: {
               attribute: "rajon_id",
               operator: "comma_list"
-            },
-            styleHighlight: {
-              weight: 5,
-              color: '#f00',
             },
             options: {
               style: {
@@ -181,6 +161,26 @@
                 fillOpacity: 0.5,
               }
             }
+          },
+          {
+            name: "sofia_rajoni",
+            type: "geojson",
+            source: "./data/sofia_rajoni.geojson",
+            filter: {
+              attribute: "id"
+            },
+            styleHighlight: {
+              weight: 5,
+              color: '#f00',
+            },
+            options: {
+              style: {
+                weight: 2,
+                opacity: 1,
+                color: "#000",
+                fillOpacity: 0,
+              }
+            },
           },
         ],
       };

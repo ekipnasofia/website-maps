@@ -23,6 +23,14 @@ const legendStyle = (config, layerConfig) => (f) => {
   };
 };
 
+const resetLayerStyle = (lfLayer, layerConfig, viewConfig) => {
+  if (viewConfig == null) {
+    lfLayer.resetStyle();
+  } else {
+    lfLayer.setStyle(viewStyle(viewConfig, layerConfig));
+  }
+};
+
 // expects arrays in the form of `[value, color, label]`, where `label` is not required
 const normalizeLegendItem = ([value, color, label]) => ({
   symbol: "circle",
@@ -129,7 +137,7 @@ L.control.legend = function (opts) {
 export default async function init(config) {
   const map = L.map("map", { zoomControl: false }).fitBounds(config.mapBounds);
   const lfFilterControl = L.control({ position: "topleft" });
-  const lfZoomControl = L.control.zoom({ position: 'topleft' });
+  const lfZoomControl = L.control.zoom({ position: "topleft" });
   const lfSidebarControl = L.control.sidebar("sidebar", { position: "right" });
   const mapState = {
     legendCollapsed: false,
@@ -296,26 +304,36 @@ export default async function init(config) {
       lfLayer = L.geoJSON(geoJson, {
         ...layerConfig.options,
         onEachFeature: (f, fLayer) => {
-          // `styleHighlight` is the style applied when a feature is click and the original style is restored when the popup is closed
-          if (layerConfig.styleHighlight) {
-            fLayer.on({
-              click: (event) => {
+          fLayer.on({
+            click: (event) => {
+              const elSelect =
+                lfFilterControl._container.querySelector("select");
+              const f = event.target.feature;
+
+              elSelect.value = f.properties["id"];
+              elSelect.dispatchEvent(new Event("input", { bubbles: true }));
+              elSelect.dispatchEvent(new Event("change", { bubbles: true }));
+
+              // `styleHighlight` is the style applied when a feature is click and the original style is restored when the popup is closed
+              if (layerConfig.styleHighlight) {
+                const viewConfig = mapState.currentView
+                  ? getViewConfig(mapState.currentView)
+                  : null;
+                resetLayerStyle(lfLayer, layerConfig, viewConfig);
+
                 event.target.setStyle(layerConfig.styleHighlight);
                 fLayer.bringToFront();
-              },
-              popupclose: (event) => {
-                if (mapState.currentView == null) {
-                  lfLayer.resetStyle(event.target);
-                } else {
-                  const viewConfig = getViewConfig(mapState.currentView);
-
-                  lfLayer.setStyle(
-                    viewStyle(viewConfig, layerConfig)
-                  );
-                }
-              },
-            });
-          }
+              }
+            },
+            popupclose: (_event) => {
+              if (layerConfig.styleHighlight) {
+                const viewConfig = mapState.currentView
+                  ? getViewConfig(mapState.currentView)
+                  : null;
+                resetLayerStyle(lfLayer, layerConfig, viewConfig);
+              }
+            },
+          });
         },
         // Note: dynamically changing the filter option will have effect only on newly added data. It will not re-evaluate already included features.
         filter: (f) => {
