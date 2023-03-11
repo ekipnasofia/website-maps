@@ -327,6 +327,7 @@ export default async function init(config) {
           // check if the the filter value equals to the value of the layer's filter attribute
           // 1) where the filter attribute contains a list of values, e.g. `1, 2, 3`
           if (layerConfig.filter.operator === "comma_list") {
+            // console.log(layerConfig.filter.attribute)
             const valueStr = f.properties[layerConfig.filter.attribute];
             const valueArr = valueStr.split(",").map((v) => parseInt(v.trim()));
 

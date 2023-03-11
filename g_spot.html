@@ -66,7 +66,7 @@
           fromLayer: "sofia_rajoni",
           boundsLayer: "sofia_rajoni",
           labelAttribute: "obns_cyr",
-          valueAttribute: "obns_num",
+          valueAttribute: "id",
         },
         legend: {
           position: "bottomright",
@@ -149,7 +149,7 @@
             type: "geojson",
             source: "./data/sofia_rajoni.geojson",
             filter: {
-              attribute: "obns_num"
+              attribute: "id"
             },
             options: {
               style: {
@@ -165,7 +165,7 @@
             type: "geojson",
             source: "./data/sofia_ge.geojson",
             filter: {
-              attribute: "obns_id",
+              attribute: "rajon_id",
               operator: "comma_list"
             },
             styleHighlight: {
