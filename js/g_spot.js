@@ -137,7 +137,7 @@ L.control.legend = function (opts) {
 export default async function init(config) {
   const map = L.map("map", { zoomControl: false }).fitBounds(config.mapBounds);
   const lfFilterControl = L.control({ position: "topleft" });
-  const lfZoomControl = L.control.zoom({ position: "topleft" });
+  const lfZoomControl = L.control.zoom({ position: 'topleft' });
   const lfSidebarControl = L.control.sidebar("sidebar", { position: "right" });
   const mapState = {
     legendCollapsed: false,
