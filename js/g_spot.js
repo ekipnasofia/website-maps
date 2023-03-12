@@ -218,24 +218,18 @@ export default async function init(config) {
 
       const layerName = config.filter.fromLayer;
       const layerConfig = getLayerConfig(layerName);
+      const lfLayer = layersByName[layerName];
+      const viewConfig = mapState.currentView
+        ? getViewConfig(mapState.currentView)
+        : null;
+      const featureLayer = lfLayer.getLayer(`${layerConfig.name}_${filterValue}`);
 
       if (layerConfig.styleHighlight) {
-        const lfLayer = layersByName[layerName];
-        const viewConfig = mapState.currentView
-          ? getViewConfig(mapState.currentView)
-          : null;
-
-          resetLayerStyle(lfLayer, layerConfig, viewConfig);
+        resetLayerStyle(lfLayer, layerConfig, viewConfig);
 
         if (mapState.filterValue) {
-          const featureLayer = lfLayer.getLayer(`${layerConfig.name}_${filterValue}`);
-
           featureLayer.setStyle(layerConfig.styleHighlight);
           featureLayer.bringToFront();
-
-          // chartManager.renderCharts(f.properties);
-          // lfSidebarControl.open("stats");
-          // addDistrictNameToQuestionnaireHeader(f.properties.obns_cyr);
         }
       }
 
@@ -247,6 +241,8 @@ export default async function init(config) {
           viewStyle(viewConfig, layerConfig)
         );
       }
+
+      showStats(featureLayer.feature);
     });
 
     return div;
@@ -377,8 +373,6 @@ export default async function init(config) {
 
                 event.target.setStyle(layerConfig.styleHighlight);
                 fLayer.bringToFront();
-
-                showStats(f);
               }
             },
             popupclose: (_event) => {
