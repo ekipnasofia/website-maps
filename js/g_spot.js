@@ -33,37 +33,50 @@ const resetLayerStyle = (lfLayer, layerConfig, viewConfig) => {
   }
 };
 
-// expects arrays in the form of `[value, color, label]`, where `label` is not required
-const normalizeLegendItem = ([value, color, label]) => ({
-  symbol: "circle",
-  value,
-  label: label ?? `< ${value}`,
-  style: { color, fillColor: color },
-});
 // ensures the legend configration is converted from array to objects like `{symbol, value, label, style: {}}`
-const normalizeLegendItems = (items) =>
-  items.map((i) => (Array.isArray(i) ? normalizeLegendItem(i) : i));
+const normalizeLegendItems = (items) => {
+  const result = [];
+  let lastValue = -Infinity;
 
+  for (const item of items) {
+    const itemObj = {};
+
+    if (Array.isArray(item)) {
+      // expects arrays in the form of `[value, color, label]`, where `label` is not required
+      const [value, color, label] = item;
+      Object.assign(itemObj, {
+        symbol: "circle",
+        value,
+        label: label ?? `<= ${value}`,
+        style: {
+          fillColor: color
+        },
+      });
+    } else {
+      Object.assign(itemObj, item);
+    }
+
+    if (!Array.isArray(itemObj.value)) {
+      itemObj.range = [lastValue, itemObj.value];
+    }
+
+    result.push(itemObj);
+
+    lastValue = itemObj.range[1];
+  }
+
+  return result;
+};
+const inRange = (value, range) => value > range[0] && value <= range[1];
 const viewStyle = (viewConfig, layerConfig) => (f) => {
   const value = f.properties[viewConfig.attribute];
   const legendItems = normalizeLegendItems(viewConfig.legend.items);
-  const legendItem = legendItems.find((item, idx) => {
-    const nextItem = legendItems[idx + 1];
-
-    if (nextItem) {
-      if (value < nextItem.value) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return true;
-    }
-  });
+  const legendItem = legendItems.find(i => inRange(value, i.range));
+  const legendItemStyle = legendItem?.style ?? {};
 
   return {
     ...layerConfig.styleBase,
-    ...legendItem.style,
+    ...legendItemStyle,
   };
 };
 
