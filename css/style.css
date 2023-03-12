@@ -1,3 +1,11 @@
+:root {
+  --map-sidebar-width-xl: 40vw;
+  --map-sidebar-width-l: 400px;
+  --map-sidebar-width-m: 100%;
+  --map-sidebar-width-s: 100%;
+  --map-sidebar-margin: 10px;
+}
+
 body {
   padding: 0;
   margin: 0;
@@ -50,20 +58,61 @@ body {
 }
 
 /* sidebar stuff  */
-.sidebar.collapsed {
-  height: 40px;
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .sidebar {
+    width: var(--map-sidebar-width-m);
+  }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  .sidebar {
+    width: var(--map-sidebar-width-l);
+  }
+}
+@media (min-width: 1200px) {
+  .sidebar {
+    width: var(--map-sidebar-width-xl);
+  }
 }
 
-/* .sidebar-right .sidebar-content {
-  right: 0;
-} */
+@media (min-width: 768px) and (max-width: 991px) {
+  .sidebar-left ~ .sidebar-map .leaflet-left {
+    left: calc(var(--map-sidebar-width-m) + var(--map-sidebar-margin));
+  }
+}
 
-#sidebar {
-  width: 40vw;
-  border: none;
+@media (min-width: 992px) and (max-width: 1199px) {
+  .sidebar-left ~ .sidebar-map .leaflet-left {
+    left: calc(var(--map-sidebar-width-l) + var(--map-sidebar-margin));
+  }
+}
+
+@media (min-width: 1200px) {
+  .sidebar-left ~ .sidebar-map .leaflet-left {
+    left: calc(var(--map-sidebar-width-xl) + var(--map-sidebar-margin));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .sidebar-right ~ .sidebar-map .leaflet-right {
+    right: calc(var(--map-sidebar-width-m) + var(--map-sidebar-margin));
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .sidebar-right ~ .sidebar-map .leaflet-right {
+    right: calc(var(--map-sidebar-width-l) + var(--map-sidebar-margin));
+  }
+}
+
+@media (min-width: 1200px) {
+  .sidebar-right ~ .sidebar-map .leaflet-right {
+    right: calc(var(--map-sidebar-width-xl) + var(--map-sidebar-margin));
+  }
 }
 
 .sidebar.collapsed {
+  height: 40px !important;
   width: 40px !important;
 }
 
@@ -92,7 +141,7 @@ body {
 }
 
 @media (max-width: 1024px) {
-  #sidebar {
+  .sidebar {
     width: 100vw;
     right: 0;
   }
@@ -182,7 +231,7 @@ body {
 }
 .pie-chart span:after {
   display: inline-block;
-  content: '';
+  content: "";
   width: 0.8em;
   height: 0.8em;
   margin-left: 0.4em;
