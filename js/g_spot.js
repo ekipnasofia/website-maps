@@ -216,6 +216,23 @@ export default async function init(config) {
 
       filterLayers();
 
+      const layerName = config.filter.fromLayer;
+      const layerConfig = getLayerConfig(layerName);
+      const lfLayer = layersByName[layerName];
+      const viewConfig = mapState.currentView
+        ? getViewConfig(mapState.currentView)
+        : null;
+      const featureLayer = lfLayer.getLayer(`${layerConfig.name}_${filterValue}`);
+
+      if (layerConfig.styleHighlight) {
+        resetLayerStyle(lfLayer, layerConfig, viewConfig);
+
+        if (mapState.filterValue) {
+          featureLayer.setStyle(layerConfig.styleHighlight);
+          featureLayer.bringToFront();
+        }
+      }
+
       if (mapState.currentView) {
         const viewConfig = getViewConfig(mapState.currentView);
         const layerConfig = getLayerConfig(viewConfig.layer);
@@ -224,6 +241,8 @@ export default async function init(config) {
           viewStyle(viewConfig, layerConfig)
         );
       }
+
+      showStats(featureLayer.feature);
     });
 
     return div;
@@ -329,6 +348,12 @@ export default async function init(config) {
       lfLayer = L.geoJSON(geoJson, {
         ...layerConfig.options,
         onEachFeature: (f, fLayer) => {
+          // NOTE the _leaflet_id has to be unique across all layers!
+          if (layerConfig.idAttribute) {
+            const fid = f.properties[layerConfig.idAttribute];
+            fLayer._leaflet_id = `${layerConfig.name}_${fid}`;
+          }
+
           fLayer.on({
             click: (event) => {
               const elSelect =
@@ -348,8 +373,6 @@ export default async function init(config) {
 
                 event.target.setStyle(layerConfig.styleHighlight);
                 fLayer.bringToFront();
-
-                showStats(f);
               }
             },
             popupclose: (_event) => {
