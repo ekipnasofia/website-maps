@@ -216,6 +216,29 @@ export default async function init(config) {
 
       filterLayers();
 
+      const layerName = config.filter.fromLayer;
+      const layerConfig = getLayerConfig(layerName);
+
+      if (layerConfig.styleHighlight) {
+        const lfLayer = layersByName[layerName];
+        const viewConfig = mapState.currentView
+          ? getViewConfig(mapState.currentView)
+          : null;
+
+          resetLayerStyle(lfLayer, layerConfig, viewConfig);
+
+        if (mapState.filterValue) {
+          const featureLayer = lfLayer.getLayer(`${layerConfig.name}_${filterValue}`);
+
+          featureLayer.setStyle(layerConfig.styleHighlight);
+          featureLayer.bringToFront();
+
+          // chartManager.renderCharts(f.properties);
+          // lfSidebarControl.open("stats");
+          // addDistrictNameToQuestionnaireHeader(f.properties.obns_cyr);
+        }
+      }
+
       if (mapState.currentView) {
         const viewConfig = getViewConfig(mapState.currentView);
         const layerConfig = getLayerConfig(viewConfig.layer);
@@ -329,6 +352,12 @@ export default async function init(config) {
       lfLayer = L.geoJSON(geoJson, {
         ...layerConfig.options,
         onEachFeature: (f, fLayer) => {
+          // NOTE the _leaflet_id has to be unique across all layers!
+          if (layerConfig.idAttribute) {
+            const fid = f.properties[layerConfig.idAttribute];
+            fLayer._leaflet_id = `${layerConfig.name}_${fid}`;
+          }
+
           fLayer.on({
             click: (event) => {
               const elSelect =
