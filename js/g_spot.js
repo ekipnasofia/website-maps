@@ -49,7 +49,7 @@ const normalizeLegendItems = (items) => {
         value,
         label: label ?? `<= ${value}`,
         style: {
-          fillColor: color
+          fillColor: color,
         },
       });
     } else {
@@ -71,7 +71,7 @@ const inRange = (value, range) => value > range[0] && value <= range[1];
 const viewStyle = (viewConfig, layerConfig) => (f) => {
   const value = f.properties[viewConfig.attribute];
   const legendItems = normalizeLegendItems(viewConfig.legend.items);
-  const legendItem = legendItems.find(i => inRange(value, i.range));
+  const legendItem = legendItems.find((i) => inRange(value, i.range));
   const legendItemStyle = legendItem?.style ?? {};
 
   return {
@@ -303,6 +303,15 @@ export default async function init(config) {
     return div;
   };
 
+  const showStats = (feature) => {
+    chartManager.renderCharts(feature.properties);
+    lfSidebarControl.open("stats");
+    addDistrictNameToQuestionnaireHeader(feature.properties["obns_cyr"]);
+  };
+  const hideStats = () => {
+    lfSidebarControl.close();
+  };
+
   document.querySelector("#views").appendChild(addViews());
 
   for (const layerConfig of config.layers) {
@@ -340,13 +349,11 @@ export default async function init(config) {
                 event.target.setStyle(layerConfig.styleHighlight);
                 fLayer.bringToFront();
 
-                chartManager.renderCharts(f.properties);
-                lfSidebarControl.open("stats");
-                addDistrictNameToQuestionnaireHeader(f.properties.obns_cyr);
+                showStats(f);
               }
             },
             popupclose: (_event) => {
-              lfSidebarControl.close();
+              hideStats();
               if (layerConfig.styleHighlight) {
                 const viewConfig = mapState.currentView
                   ? getViewConfig(mapState.currentView)
@@ -387,13 +394,6 @@ export default async function init(config) {
 
       if (layerConfig.popupTmpl) {
         lfLayer.bindPopup((event) => {
-          // const rendered = Mustache.render(loadChartsTemplate(), {
-          //   data: JSON.stringify(event.feature.properties),
-          // });
-          // return document.createRange().createContextualFragment(rendered);
-          // toggleSidebar();
-          // toggleSidebar()
-
           chartManager.renderCharts(event.feature.properties);
           lfSidebarControl.open("stats");
           return Mustache.render(layerConfig.popupTmpl, { f: event.feature });
