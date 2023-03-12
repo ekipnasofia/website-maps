@@ -36,7 +36,9 @@ const normalizeLegendItem = ([value, color, label]) => ({
   symbol: "circle",
   value,
   label: label ?? `< ${value}`,
-  style: { color, fillColor: color },
+  style: {
+    fillColor: color
+  },
 });
 // ensures the legend configration is converted from array to objects like `{symbol, value, label, style: {}}`
 const normalizeLegendItems = (items) =>
