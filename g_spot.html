@@ -84,25 +84,79 @@
                   description: "Данни: ГРАО 2020",
                   legend: {
                     items: [
-                      [10, "yellow"],
-                      [50, "orange"],
-                      [100, "pink"],
-                      [200, "red"],
-                      [500, "brown"],
-                      [1000, "brown"],
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
                     ],
                   },
                 },
                 {
                   layer: "sofia_ge",
                   attribute: "grao_nasel",
-                  label: "Брой на обитатели",
+                  label: "Брой на обитателите в ГЕ",
                   description: "Данни: ГРАО 2020",
                   legend: {
                     items: [
-                      [1000, "darkblue"],
-                      [10000, "royalblue"],
-                      [100000, "lightblue"],
+                      [0, "#fff"],
+                      [300, "#cbdefe"],
+                      [1000, "#afcffe"],
+                      [5000, "#91bffd"],
+                      [10000, "#6db0fc"],
+                      [20000, "#5587c1"],
+                      [30000, "#3e618a"],
+                      [44000, "#283d56"],
+                    ],
+                  },
+                },
+                {
+                  layer: "sofia_ge",
+                  attribute: "perc_014",
+                  label: "Демографска структура -  0-14 години",
+                  description: "",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [5, "#afcffe"],
+                      [10, "#91bffd"],
+                      [15, "#6db0fc"],
+                      [20, "#5587c1"],
+                      [30, "#283d56"],
+                    ],
+                  },
+                },
+                {
+                  layer: "sofia_ge",
+                  attribute: "perc_1565",
+                  label: "Демографска структура - 15-65 години",
+                  description: "",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [60, "#afcffe"],
+                      [65, "#91bffd"],
+                      [70, "#6db0fc"],
+                      [80, "#5587c1"],
+                      [100, "#283d56"],
+                    ],
+                  },
+                },
+                {
+                  layer: "sofia_ge",
+                  attribute: "perc_nad65",
+                  label: "Демографска структура - над 65 години",
+                  description: "",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [10, "#cbdefe"],
+                      [15, "#91bffd"],
+                      [20, "#6db0fc"],
+                      [30, "#5587c1"],
+                      [42, "#283d56"],
                     ],
                   },
                 },
@@ -156,9 +210,9 @@
               style: {
                 weight: 1,
                 opacity: 1,
-                color: "#f00",
-                fillColor: "#0f0",
-                fillOpacity: 0.5,
+                color: "#333333",
+                fillColor: "#d9ead3",
+                fillOpacity: 0.8,
               }
             }
           },
