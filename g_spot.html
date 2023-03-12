@@ -68,7 +68,11 @@
         </div>
         <div class="sidebar-pane" id="stats">
           <h1 class="sidebar-header">
-            Статистика
+            Данни от анкета
+            <span
+              id="questionnaire-district-name"
+              style="font-weight: bold"
+            ></span>
             <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
           </h1>
 
@@ -83,9 +87,9 @@
       const config = {
         filter: {
           fromLayer: "sofia_rajoni",
-          boundsLayer: "sofia_rajoni",
+          boundsLayer: "sofia_ge",
           labelAttribute: "obns_cyr",
-          valueAttribute: "obns_num",
+          valueAttribute: "id",
         },
         legend: {
           position: "bottomright",
@@ -164,32 +168,12 @@
             },
           },
           {
-            name: "sofia_rajoni",
-            type: "geojson",
-            source: "./data/sofia_rajoni.geojson",
-            filter: {
-              attribute: "obns_num",
-            },
-            options: {
-              style: {
-                weight: 2,
-                opacity: 1,
-                color: "#000",
-                fillOpacity: 0,
-              },
-            },
-          },
-          {
             name: "sofia_ge",
             type: "geojson",
             source: "./data/sofia_ge.geojson",
             filter: {
-              attribute: "obns_id",
+              attribute: "rajon_id",
               operator: "comma_list",
-            },
-            styleHighlight: {
-              weight: 5,
-              color: "#f00",
             },
             options: {
               style: {
@@ -200,17 +184,26 @@
                 fillOpacity: 0.5,
               },
             },
-            popupTmpl: `
-              {{f.properties.regname}}, {{f.properties.rajon}}
-
-              <table>
-                <tr>
-                  <td>
-                    Население: {{f.properties.grao_nasel}}
-                  </td>
-                </tr>
-              </table>
-            `,
+          },
+          {
+            name: "sofia_rajoni",
+            type: "geojson",
+            source: "./data/sofia_rajoni.geojson",
+            // filter: {
+            //   attribute: "id"
+            // },
+            styleHighlight: {
+              weight: 5,
+              color: "#f00",
+            },
+            options: {
+              style: {
+                weight: 2,
+                opacity: 1,
+                color: "#000",
+                fillOpacity: 0,
+              },
+            },
           },
         ],
       };

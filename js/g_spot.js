@@ -1,4 +1,4 @@
-import chartManager from "../charts/chartManager.js"
+import chartManager from "../charts/chartManager.js";
 
 const legendStyle = (config, layerConfig) => (f) => {
   const value = f.properties[layerConfig.styleProperty];
@@ -23,6 +23,14 @@ const legendStyle = (config, layerConfig) => (f) => {
     ...layerConfig.styleBase,
     ...legendItem.style,
   };
+};
+
+const resetLayerStyle = (lfLayer, layerConfig, viewConfig) => {
+  if (viewConfig == null) {
+    lfLayer.resetStyle();
+  } else {
+    lfLayer.setStyle(viewStyle(viewConfig, layerConfig));
+  }
 };
 
 // expects arrays in the form of `[value, color, label]`, where `label` is not required
@@ -299,24 +307,41 @@ export default async function init(config) {
       lfLayer = L.geoJSON(geoJson, {
         ...layerConfig.options,
         onEachFeature: (f, fLayer) => {
-          // `styleHighlight` is the style applied when a feature is click and the original style is restored when the popup is closed
-          if (layerConfig.styleHighlight) {
-            fLayer.on({
-              click: (event) => {
+          fLayer.on({
+            click: (event) => {
+              const elSelect =
+                lfFilterControl._container.querySelector("select");
+              const f = event.target.feature;
+
+              elSelect.value = f.properties["id"];
+              elSelect.dispatchEvent(new Event("input", { bubbles: true }));
+              elSelect.dispatchEvent(new Event("change", { bubbles: true }));
+
+              // `styleHighlight` is the style applied when a feature is click and the original style is restored when the popup is closed
+              if (layerConfig.styleHighlight) {
+                const viewConfig = mapState.currentView
+                  ? getViewConfig(mapState.currentView)
+                  : null;
+                resetLayerStyle(lfLayer, layerConfig, viewConfig);
+
                 event.target.setStyle(layerConfig.styleHighlight);
                 fLayer.bringToFront();
-              },
-              popupclose: (event) => {
-                if (mapState.currentView == null) {
-                  lfLayer.resetStyle(event.target);
-                } else {
-                  const viewConfig = getViewConfig(mapState.currentView);
 
-                  lfLayer.setStyle(viewStyle(viewConfig, layerConfig));
-                }
-              },
-            });
-          }
+                chartManager.renderCharts(f.properties);
+                lfSidebarControl.open("stats");
+                addDistrictNameToQuestionnaireHeader(f.properties.obns_cyr);
+              }
+            },
+            popupclose: (_event) => {
+              lfSidebarControl.close();
+              if (layerConfig.styleHighlight) {
+                const viewConfig = mapState.currentView
+                  ? getViewConfig(mapState.currentView)
+                  : null;
+                resetLayerStyle(lfLayer, layerConfig, viewConfig);
+              }
+            },
+          });
         },
         // Note: dynamically changing the filter option will have effect only on newly added data. It will not re-evaluate already included features.
         filter: (f) => {
@@ -328,6 +353,7 @@ export default async function init(config) {
           // check if the the filter value equals to the value of the layer's filter attribute
           // 1) where the filter attribute contains a list of values, e.g. `1, 2, 3`
           if (layerConfig.filter.operator === "comma_list") {
+            // console.log(layerConfig.filter.attribute)
             const valueStr = f.properties[layerConfig.filter.attribute];
             const valueArr = valueStr.split(",").map((v) => parseInt(v.trim()));
 
@@ -355,17 +381,16 @@ export default async function init(config) {
           // toggleSidebar();
           // toggleSidebar()
 
-          chartManager.renderCharts(event.feature.properties)
-          lfSidebarControl.open("stats")
+          chartManager.renderCharts(event.feature.properties);
+          lfSidebarControl.open("stats");
           return Mustache.render(layerConfig.popupTmpl, { f: event.feature });
         });
 
         lfLayer.getPopup().on("remove", () => {
-          lfSidebarControl.close()
+          lfSidebarControl.close();
         });
       }
 
-      
       // if the map supports filtering, fill the filter dropdown with values
       if (config.filter && layerConfig.name === config.filter.fromLayer) {
         const options = geoJson.features.map((f) => ({
@@ -388,11 +413,10 @@ export default async function init(config) {
   }
 }
 
-function loadChartsTemplate() {
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", "charts/index.html", false);
-  xhr.send();
-  return xhr.responseText;
+function addDistrictNameToQuestionnaireHeader(districtName) {
+  if (document.getElementById("stats").classList.contains("active")) {
+    document.getElementById(
+      "questionnaire-district-name"
+    ).innerHTML = `- р-н ${districtName}`;
+  }
 }
-
-
