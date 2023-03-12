@@ -1,3 +1,5 @@
+import chartManager from "../charts/chartManager.js";
+
 const legendStyle = (config, layerConfig) => (f) => {
   const value = f.properties[layerConfig.styleProperty];
   const legendItems = config.legend.items.filter(
@@ -47,7 +49,7 @@ const normalizeLegendItems = (items) => {
         value,
         label: label ?? `<= ${value}`,
         style: {
-          fillColor: color
+          fillColor: color,
         },
       });
     } else {
@@ -69,7 +71,7 @@ const inRange = (value, range) => value > range[0] && value <= range[1];
 const viewStyle = (viewConfig, layerConfig) => (f) => {
   const value = f.properties[viewConfig.attribute];
   const legendItems = normalizeLegendItems(viewConfig.legend.items);
-  const legendItem = legendItems.find(i => inRange(value, i.range));
+  const legendItem = legendItems.find((i) => inRange(value, i.range));
   const legendItemStyle = legendItem?.style ?? {};
 
   return {
@@ -150,8 +152,9 @@ L.control.legend = function (opts) {
 export default async function init(config) {
   const map = L.map("map", { zoomControl: false }).fitBounds(config.mapBounds);
   const lfFilterControl = L.control({ position: "topleft" });
-  const lfZoomControl = L.control.zoom({ position: 'topleft' });
+  const lfZoomControl = L.control.zoom({ position: "topleft" });
   const lfSidebarControl = L.control.sidebar("sidebar", { position: "right" });
+
   const mapState = {
     legendCollapsed: false,
     filterValue: null,
@@ -300,6 +303,15 @@ export default async function init(config) {
     return div;
   };
 
+  const showStats = (feature) => {
+    chartManager.renderCharts(feature.properties);
+    lfSidebarControl.open("stats");
+    addDistrictNameToQuestionnaireHeader(feature.properties["obns_cyr"]);
+  };
+  const hideStats = () => {
+    lfSidebarControl.close();
+  };
+
   document.querySelector("#views").appendChild(addViews());
 
   for (const layerConfig of config.layers) {
@@ -336,9 +348,12 @@ export default async function init(config) {
 
                 event.target.setStyle(layerConfig.styleHighlight);
                 fLayer.bringToFront();
+
+                showStats(f);
               }
             },
             popupclose: (_event) => {
+              hideStats();
               if (layerConfig.styleHighlight) {
                 const viewConfig = mapState.currentView
                   ? getViewConfig(mapState.currentView)
@@ -378,9 +393,15 @@ export default async function init(config) {
       // }
 
       if (layerConfig.popupTmpl) {
-        lfLayer.bindPopup((event) =>
-          Mustache.render(layerConfig.popupTmpl, { f: event.feature })
-        );
+        lfLayer.bindPopup((event) => {
+          chartManager.renderCharts(event.feature.properties);
+          lfSidebarControl.open("stats");
+          return Mustache.render(layerConfig.popupTmpl, { f: event.feature });
+        });
+
+        lfLayer.getPopup().on("remove", () => {
+          lfSidebarControl.close();
+        });
       }
 
       // if the map supports filtering, fill the filter dropdown with values
@@ -402,5 +423,13 @@ export default async function init(config) {
     lfLayer.addTo(map);
 
     layersByName[layerConfig.name] = lfLayer;
+  }
+}
+
+function addDistrictNameToQuestionnaireHeader(districtName) {
+  if (document.getElementById("stats").classList.contains("active")) {
+    document.getElementById(
+      "questionnaire-district-name"
+    ).innerHTML = `- р-н ${districtName}`;
   }
 }
