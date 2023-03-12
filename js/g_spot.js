@@ -224,15 +224,6 @@ export default async function init(config) {
         : null;
       const featureLayer = lfLayer.getLayer(`${layerConfig.name}_${filterValue}`);
 
-      if (layerConfig.styleHighlight) {
-        resetLayerStyle(lfLayer, layerConfig, viewConfig);
-
-        if (mapState.filterValue) {
-          featureLayer.setStyle(layerConfig.styleHighlight);
-          featureLayer.bringToFront();
-        }
-      }
-
       if (mapState.currentView) {
         const viewConfig = getViewConfig(mapState.currentView);
         const layerConfig = getLayerConfig(viewConfig.layer);
@@ -240,6 +231,18 @@ export default async function init(config) {
         layersByName[viewConfig.layer].setStyle(
           viewStyle(viewConfig, layerConfig)
         );
+      }
+
+      if (layerConfig.styleHighlight) {
+        resetLayerStyle(lfLayer, layerConfig, viewConfig);
+
+        if (mapState.filterValue) {
+          featureLayer.setStyle(layerConfig.styleHighlight);
+          featureLayer.bringToFront();
+        } else {
+          lfLayer.resetStyle();
+          lfLayer.bringToFront();
+        }
       }
 
       showStats(featureLayer.feature);
