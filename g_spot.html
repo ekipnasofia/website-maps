@@ -22,14 +22,23 @@
     ></script>
 
     <!-- Leaflet sidebar -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Turbo87/sidebar-v2@v0.4.0/css/leaflet-sidebar.min.css">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Turbo87/sidebar-v2@v0.4.0/js/leaflet-sidebar.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/Turbo87/sidebar-v2@v0.4.0/css/leaflet-sidebar.min.css"
+    />
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/gh/Turbo87/sidebar-v2@v0.4.0/js/leaflet-sidebar.min.js"
+    ></script>
 
     <!-- Mustache -->
     <script
       src="https://www.unpkg.com/mustache@4.2.0/mustache.min.js"
       crossorigin=""
     ></script>
+
+    <!-- Apex Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <!-- Site -->
     <link rel="stylesheet" href="./css/style.css" />
@@ -40,6 +49,9 @@
         <ul role="tablist">
           <li>
             <a href="#home" role="tab">i</a>
+          </li>
+          <li>
+            <a href="#stats" role="tab">%</a>
           </li>
         </ul>
       </div>
@@ -53,7 +65,18 @@
           </h1>
 
           <div id="views"></div>
+        </div>
+        <div class="sidebar-pane" id="stats">
+          <h1 class="sidebar-header">
+            Данни от анкета
+            <span
+              id="questionnaire-district-name"
+              style="font-weight: bold"
+            ></span>
+            <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+          </h1>
 
+          <div id="charts_container"></div>
         </div>
       </div>
     </div>
@@ -736,7 +759,7 @@
             source: "./data/sofia_ge.geojson",
             filter: {
               attribute: "rajon_id",
-              operator: "comma_list"
+              operator: "comma_list",
             },
             options: {
               style: {
@@ -757,7 +780,7 @@
             // },
             styleHighlight: {
               weight: 5,
-              color: '#f00',
+              color: "#f00",
             },
             options: {
               style: {
@@ -765,7 +788,7 @@
                 opacity: 1,
                 color: "#000",
                 fillOpacity: 0,
-              }
+              },
             },
           },
         ],

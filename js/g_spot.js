@@ -1,3 +1,5 @@
+import chartManager from "../charts/chartManager.js";
+
 const legendStyle = (config, layerConfig) => (f) => {
   const value = f.properties[layerConfig.styleProperty];
   const legendItems = config.legend.items.filter(
@@ -150,8 +152,9 @@ L.control.legend = function (opts) {
 export default async function init(config) {
   const map = L.map("map", { zoomControl: false }).fitBounds(config.mapBounds);
   const lfFilterControl = L.control({ position: "topleft" });
-  const lfZoomControl = L.control.zoom({ position: 'topleft' });
+  const lfZoomControl = L.control.zoom({ position: "topleft" });
   const lfSidebarControl = L.control.sidebar("sidebar", { position: "right" });
+
   const mapState = {
     legendCollapsed: false,
     filterValue: null,
@@ -336,9 +339,14 @@ export default async function init(config) {
 
                 event.target.setStyle(layerConfig.styleHighlight);
                 fLayer.bringToFront();
+
+                chartManager.renderCharts(f.properties);
+                lfSidebarControl.open("stats");
+                addDistrictNameToQuestionnaireHeader(f.properties.obns_cyr);
               }
             },
             popupclose: (_event) => {
+              lfSidebarControl.close();
               if (layerConfig.styleHighlight) {
                 const viewConfig = mapState.currentView
                   ? getViewConfig(mapState.currentView)
@@ -378,9 +386,22 @@ export default async function init(config) {
       // }
 
       if (layerConfig.popupTmpl) {
-        lfLayer.bindPopup((event) =>
-          Mustache.render(layerConfig.popupTmpl, { f: event.feature })
-        );
+        lfLayer.bindPopup((event) => {
+          // const rendered = Mustache.render(loadChartsTemplate(), {
+          //   data: JSON.stringify(event.feature.properties),
+          // });
+          // return document.createRange().createContextualFragment(rendered);
+          // toggleSidebar();
+          // toggleSidebar()
+
+          chartManager.renderCharts(event.feature.properties);
+          lfSidebarControl.open("stats");
+          return Mustache.render(layerConfig.popupTmpl, { f: event.feature });
+        });
+
+        lfLayer.getPopup().on("remove", () => {
+          lfSidebarControl.close();
+        });
       }
 
       // if the map supports filtering, fill the filter dropdown with values
@@ -402,5 +423,13 @@ export default async function init(config) {
     lfLayer.addTo(map);
 
     layersByName[layerConfig.name] = lfLayer;
+  }
+}
+
+function addDistrictNameToQuestionnaireHeader(districtName) {
+  if (document.getElementById("stats").classList.contains("active")) {
+    document.getElementById(
+      "questionnaire-district-name"
+    ).innerHTML = `- р-н ${districtName}`;
   }
 }
