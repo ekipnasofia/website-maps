@@ -385,14 +385,332 @@
                   description: "",
                   legend: {
                     items: [
-                      ["0", "#fff"],
-                      ["до 3 етажа", "#cbdefe"],
-                      ["от 4 до 6 етажа", "#6db0fc"],
-                      ["от 7 до 10 етажа", "#283d56"],
+                      ["0", "#fff", "ГЕ без застрояване"],
+                      ["до 3 етажа", "#cbdefe", "до 3 етажа"],
+                      ["от 4 до 6 етажа", "#6db0fc", "от 4 до 6 етажа"],
+                      ["от 7 до 10 етажа", "#283d56", "от 7 до 10 етажа"],
+                    ],
+                  },
+                },
+                {
+                  layer: "sofia_ge",
+                  attribute: "sr_etaj",
+                  label: "Средна етажност",
+                  description: "",
+                  legend: {
+                    items: [
+                      [0, "#fff", "ГЕ без застрояване"],
+                      [2, "#cbdefe", "1 - 2 етажа"],
+                      [3, "#91bffd", "2 - 3 етажа"],
+                      [4, "#6db0fc", "3 - 4 етажа"],
+                      [5, "#5587c1", "4 - 5 етажа"],
+                      [6.24, "#283d56", "5 - 6,5 етажа"],
+                    ],
+                  },
+                },
+                {
+                  layer: "sofia_ge",
+                  attribute: "razr_jil_2010",
+                  label: "Издадени разрешения за строеж след 2010 г.",
+                  description: "",
+                  legend: {
+                    items: [
+                      [0, "#fff", "0 броя"],
+                      [10, "#cbdefe", "0 - 10 броя"],
+                      [20, "#91bffd", "10 - 20 броя"],
+                      [30, "#6db0fc", "20 - 30 броя"],
+                      [60, "#5587c1", "30 - 60 броя"],
+                      [117, "#283d56", "60 - 120 броя"],
                     ],
                   },
                 },
               ],
+            },
+            {              
+              label: "<b>Жилища</b>",
+              items: [
+                {
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
+                    ],
+                  },
+                },
+              ]
+            },
+            {              
+              label: "<b>Канализация</b>",
+              items: [
+                {
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
+                    ],
+                  },
+                },
+              ]
+            },
+            {              
+              label: "<b>Енергия</b>",
+              items: [
+                {
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
+                    ],
+                  },
+                },
+              ]
+            },
+            {              
+              label: "<b>Транспорт</b>",
+              items: [
+                {
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
+                    ],
+                  },
+                },
+              ]
+            },
+            {              
+              label: "<b>Здравна инфраструктура и заболеваемост</b>",
+              items: [
+                {
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
+                    ],
+                  },
+                },
+              ]
+            },
+            {              
+              label: "<b>Образователна инфраструктура</b>",
+              items: [
+                {
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
+                    ],
+                  },
+                },
+              ]
+            },
+            {              
+              label: "<b>Мрежата от социални услуги</b>",
+              items: [
+                {
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
+                    ],
+                  },
+                },
+              ]
+            },
+            {              
+              label: "<b>Култура и културна инфраструктура</b>",
+              items: [
+                {
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
+                    ],
+                  },
+                },
+              ]
+            },
+            {              
+              label: "<b>Идентичност и културно наследство</b>",
+              items: [
+                {
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
+                    ],
+                  },
+                },
+              ]
+            },
+            {              
+              label: "<b>Въздух</b>",
+              items: [
+                {
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
+                    ],
+                  },
+                },
+              ]
+            },
+            {              
+              label: "<b>Води</b>",
+              items: [
+                {
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
+                    ],
+                  },
+                },
+              ]
+            },
+            {              
+              label: "<b>Почви</b>",
+              items: [
+                {
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
+                    ],
+                  },
+                },
+              ]
+            },
+            {              
+              label: "<b>Зелена система</b>",
+              items: [
+                {
+                  layer: "sofia_ge",
+                  attribute: "gastota_nasel",
+                  label: "Гъстота на населението",
+                  description: "Данни: ГРАО 2020",
+                  legend: {
+                    items: [
+                      [0, "#fff"],
+                      [50, "#cbdefe"],
+                      [100, "#afcffe"],
+                      [150, "#91bffd"],
+                      [250, "#6db0fc"],
+                      [350, "#5587c1"],
+                      [600, "#283d56"]
+                    ],
+                  },
+                },
+              ]
             },
           ],
         },
