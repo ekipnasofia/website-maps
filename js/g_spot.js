@@ -244,6 +244,9 @@ export default async function init(config) {
         if (mapState.filterValue) {
           featureLayer.setStyle(layerConfig.styleHighlight);
           featureLayer.bringToFront();
+        } else {
+          lfLayer.resetStyle();
+          lfLayer.bringToFront();
         }
       }
 
