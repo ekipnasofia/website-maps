@@ -193,12 +193,9 @@ export default async function init(config) {
       lfLayer.addData(geoJson);
 
       if (layerConfig.name == config.filter.boundsLayer) {
-        map.fitBounds(
-          lfLayer.getBounds(),
-          {
-            paddingBottomRight: [600, 0,],
-          }
-        );
+        map.fitBounds(lfLayer.getBounds(), {
+          paddingBottomRight: [600, 0],
+        });
       }
     }
   };
@@ -228,7 +225,9 @@ export default async function init(config) {
       const viewConfig = mapState.currentView
         ? getViewConfig(mapState.currentView)
         : null;
-      const featureLayer = lfLayer.getLayer(`${layerConfig.name}_${filterValue}`);
+      const featureLayer = lfLayer.getLayer(
+        `${layerConfig.name}_${filterValue}`
+      );
 
       if (mapState.currentView) {
         const viewConfig = getViewConfig(mapState.currentView);
@@ -440,7 +439,7 @@ export default async function init(config) {
           elSelect.value = mapState.filterValue;
           elSelect.dispatchEvent(new Event("input", { bubbles: true }));
           elSelect.dispatchEvent(new Event("change", { bubbles: true }));
-        })
+        });
       }
     } else {
       throw new Error("Unknown layer type: " + layerConfig.type);
