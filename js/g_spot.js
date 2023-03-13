@@ -192,7 +192,12 @@ export default async function init(config) {
       lfLayer.addData(geoJson);
 
       if (layerConfig.name == config.filter.boundsLayer) {
-        map.fitBounds(lfLayer.getBounds());
+        map.fitBounds(
+          lfLayer.getBounds(),
+          {
+            paddingBottomRight: [600, 0,],
+          }
+        );
       }
     }
   };
