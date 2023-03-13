@@ -154,10 +154,11 @@ export default async function init(config) {
   const lfFilterControl = L.control({ position: "topleft" });
   const lfZoomControl = L.control.zoom({ position: "topleft" });
   const lfSidebarControl = L.control.sidebar("sidebar", { position: "right" });
+  const url = new URL(window.location.href);
 
   const mapState = {
     legendCollapsed: false,
-    filterValue: null,
+    filterValue: url.searchParams.get("filter"),
     currentView: null,
   };
   const layersByName = {};
@@ -430,11 +431,16 @@ export default async function init(config) {
           label: f.properties[config.filter.labelAttribute],
           value: f.properties[config.filter.valueAttribute],
         }));
+        const elSelect = lfFilterControl._container.querySelector("select");
 
-        appendSelectOptions(
-          lfFilterControl._container.querySelector("select"),
-          options
-        );
+        appendSelectOptions(elSelect, options);
+
+        // I am ashamed I have to use `setTimeout`, but it works...
+        setTimeout(() => {
+          elSelect.value = mapState.filterValue;
+          elSelect.dispatchEvent(new Event("input", { bubbles: true }));
+          elSelect.dispatchEvent(new Event("change", { bubbles: true }));
+        })
       }
     } else {
       throw new Error("Unknown layer type: " + layerConfig.type);
