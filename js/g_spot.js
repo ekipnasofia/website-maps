@@ -26,9 +26,9 @@ const legendStyle = (config, layerConfig) => (f) => {
 };
 
 const resetLayerStyle = (lfLayer, layerConfig, viewConfig) => {
-  if (viewConfig == null) {
-    lfLayer.resetStyle();
-  } else {
+  lfLayer.resetStyle();
+
+  if (viewConfig != null) {
     lfLayer.setStyle(viewStyle(viewConfig, layerConfig));
   }
 };
@@ -239,9 +239,6 @@ export default async function init(config) {
         if (mapState.filterValue) {
           featureLayer.setStyle(layerConfig.styleHighlight);
           featureLayer.bringToFront();
-        } else {
-          lfLayer.resetStyle();
-          lfLayer.bringToFront();
         }
       }
 
@@ -366,17 +363,6 @@ export default async function init(config) {
               elSelect.value = f.properties["id"];
               elSelect.dispatchEvent(new Event("input", { bubbles: true }));
               elSelect.dispatchEvent(new Event("change", { bubbles: true }));
-
-              // `styleHighlight` is the style applied when a feature is click and the original style is restored when the popup is closed
-              if (layerConfig.styleHighlight) {
-                const viewConfig = mapState.currentView
-                  ? getViewConfig(mapState.currentView)
-                  : null;
-                resetLayerStyle(lfLayer, layerConfig, viewConfig);
-
-                event.target.setStyle(layerConfig.styleHighlight);
-                fLayer.bringToFront();
-              }
             },
             popupclose: (_event) => {
               hideStats();
