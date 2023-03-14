@@ -299,8 +299,8 @@ export default async function init(config) {
 
     div.innerHTML = htmlLines.join("\n");
 
-    div.querySelectorAll('[data-panel-tab]').forEach((btn) => {
-      btn.addEventListener('click', event => {
+    div.querySelectorAll("[data-panel-tab]").forEach((btn) => {
+      btn.addEventListener("click", (event) => {
         lfSidebarControl.open(btn.dataset.panelTab);
       });
     });
@@ -348,19 +348,27 @@ export default async function init(config) {
 
   document.querySelector("#views").appendChild(addViews());
 
+  // parallelize loading of geojson data
+  await Promise.all(
+    config.layers
+      .filter((layerConfig) => layerConfig.type === "geojson")
+      .map((layerConfig) =>
+        fetch(layerConfig.source)
+          .then((resp) => resp.json())
+          // cache the loaded geojson for later user
+          .then((geojson) => (geojsonByName[layerConfig.name] = geojson))
+      )
+  );
+
   for (const layerConfig of config.layers) {
     let lfLayer = null;
 
     if (layerConfig.type === "tilelayer") {
       lfLayer = L.tileLayer(layerConfig.source, layerConfig.options);
     } else if (layerConfig.type === "geojson") {
-      const geoJson = await fetch(layerConfig.source).then((resp) =>
-        resp.json()
-      );
+      const geojson = geojsonByName[layerConfig.name];
 
-      geojsonByName[layerConfig.name] = geoJson;
-
-      lfLayer = L.geoJSON(geoJson, {
+      lfLayer = L.geoJSON(geojson, {
         ...layerConfig.options,
         onEachFeature: (f, fLayer) => {
           // NOTE the _leaflet_id has to be unique across all layers!
@@ -433,7 +441,7 @@ export default async function init(config) {
 
       // if the map supports filtering, fill the filter dropdown with values
       if (config.filter && layerConfig.name === config.filter.fromLayer) {
-        const options = geoJson.features.map((f) => ({
+        const options = geojson.features.map((f) => ({
           label: f.properties[config.filter.labelAttribute],
           value: f.properties[config.filter.valueAttribute],
         }));
