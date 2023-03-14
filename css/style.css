@@ -203,6 +203,7 @@ body {
   display: inline-block;
   height: 0.75rem;
   width: 0.75rem;
+  border: 1px solid #ccc;
 }
 
 #map .symbol.circle {
