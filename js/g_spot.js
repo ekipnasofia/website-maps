@@ -468,12 +468,6 @@ export default async function init(config) {
         const elSelect = lfFilterControl._container.querySelector("select");
 
         appendSelectOptions(elSelect, options);
-
-        if (mapState.filterValue) {
-          elSelect.value = mapState.filterValue;
-          elSelect.dispatchEvent(new Event("input", { bubbles: true }));
-          elSelect.dispatchEvent(new Event("change", { bubbles: true }));
-        }
       }
     } else {
       throw new Error("Unknown layer type: " + layerConfig.type);
@@ -490,6 +484,14 @@ export default async function init(config) {
 
   if (mapState.currentView) {
     updateMapStyling();
+  }
+
+  if (mapState.filterValue) {
+    const elSelect = lfFilterControl._container.querySelector("select");
+
+    elSelect.value = mapState.filterValue;
+    elSelect.dispatchEvent(new Event("input", { bubbles: true }));
+    elSelect.dispatchEvent(new Event("change", { bubbles: true }));
   }
 }
 
