@@ -120,6 +120,12 @@ body {
   display: none;
 }
 
+.sidebar .sidebar-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
 .chart-group {
   padding: 1rem 0;
   font-family: sans-serif;
