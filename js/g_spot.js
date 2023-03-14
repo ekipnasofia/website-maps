@@ -159,7 +159,7 @@ export default async function init(config) {
   const mapState = {
     legendCollapsed: false,
     filterValue: url.searchParams.get("filter"),
-    currentView: null,
+    currentView: config.views.selectedView ?? null,
   };
   const layersByName = {};
   const geojsonByName = {};
@@ -196,6 +196,7 @@ export default async function init(config) {
         map.fitBounds(lfLayer.getBounds(), {
           paddingBottomRight: [600, 0],
         });
+        console.log(map)
       }
     }
   };
@@ -258,6 +259,31 @@ export default async function init(config) {
   lfFilterControl.addTo(map);
   lfZoomControl.addTo(map);
 
+  const updateMapStyling = () => {
+    const viewConfig = getViewConfig(mapState.currentView);
+    const layerConfig = getLayerConfig(viewConfig.layer);
+
+    layersByName[viewConfig.layer].setStyle(
+      viewStyle(viewConfig, layerConfig)
+    );
+
+    if (controlsByName["legend"]) {
+      // TODO find a better way to get and store the state of the legend
+      mapState.legendCollapsed =
+        controlsByName["legend"]._container.classList.contains("collapsed");
+      controlsByName["legend"].remove();
+    }
+
+    controlsByName["legend"] = L.control
+      .legend({
+        position: config.legend.position,
+        collapsed: mapState.legendCollapsed,
+        viewConfig,
+        layerConfig,
+      })
+      .addTo(map);
+  };
+
   const addViews = () => {
     const div = L.DomUtil.create("div", "view");
 
@@ -278,7 +304,7 @@ export default async function init(config) {
         subitemsHtmlLines.push(`
           <li class="view-item">
             <label>
-              <input type="radio" name="view_${viewSubitem.layer}" value="${viewSubitem.attribute}">
+              <input type="radio" name="view_${viewSubitem.layer}" value="${viewSubitem.attribute}" ${mapState.currentView === viewSubitem.attribute ? 'checked' : ''}>
               ${viewSubitem.label}
             </label>
           </li>
@@ -309,28 +335,7 @@ export default async function init(config) {
       radioEl.addEventListener("change", (event) => {
         mapState.currentView = event.target.value;
 
-        const viewConfig = getViewConfig(mapState.currentView);
-        const layerConfig = getLayerConfig(viewConfig.layer);
-
-        layersByName[viewConfig.layer].setStyle(
-          viewStyle(viewConfig, layerConfig)
-        );
-
-        if (controlsByName["legend"]) {
-          // TODO find a better way to get and store the state of the legend
-          mapState.legendCollapsed =
-            controlsByName["legend"]._container.classList.contains("collapsed");
-          controlsByName["legend"].remove();
-        }
-
-        controlsByName["legend"] = L.control
-          .legend({
-            position: config.legend.position,
-            collapsed: mapState.legendCollapsed,
-            viewConfig,
-            layerConfig,
-          })
-          .addTo(map);
+        updateMapStyling();
       });
     });
 
@@ -466,6 +471,10 @@ export default async function init(config) {
 
   if (config.sidebar.initialPanel) {
     lfSidebarControl.open(config.sidebar.initialPanel);
+  }
+
+  if (mapState.currentView) {
+    updateMapStyling();
   }
 }
 
