@@ -211,7 +211,6 @@ export default async function init(config) {
         map.fitBounds(lfLayer.getBounds(), {
           paddingBottomRight: [600, 0],
         });
-        console.log(map);
       }
     }
   };
