@@ -265,7 +265,8 @@ export default async function init(config) {
     L.DomEvent.disableClickPropagation(div);
     L.DomEvent.disableScrollPropagation(div);
 
-    const htmlLines = [];
+    const panelDescription = config.views.description || "";
+    const htmlLines = [panelDescription];
 
     // htmlLines.push(`<h4 class="header">${config.views.header}</h4>`);
     htmlLines.push(`<ul class="view-items">`);
@@ -297,6 +298,12 @@ export default async function init(config) {
     htmlLines.push(`</ul>`);
 
     div.innerHTML = htmlLines.join("\n");
+
+    div.querySelectorAll('[data-panel-tab]').forEach((btn) => {
+      btn.addEventListener('click', event => {
+        lfSidebarControl.open(btn.dataset.panelTab);
+      });
+    });
 
     div.querySelectorAll('input[type="radio"]').forEach((radioEl) => {
       radioEl.addEventListener("change", (event) => {

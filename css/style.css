@@ -189,6 +189,19 @@ body {
   padding-right: 0;
 }
 
+.view button {
+  color: white;
+  background-color: #0074d9;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  display: block;
+  width: 100%;
+  border: 1px solid darkblue;
+  cursor: pointer;
+}
+
 #map .legend .header {
   margin: 0;
 }
