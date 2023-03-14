@@ -47,7 +47,7 @@ const normalizeLegendItems = (items) => {
       Object.assign(itemObj, {
         symbol: "circle",
         value,
-        label: label ?? `<= ${value}`,
+        label,
         style: {
           fillColor: color,
         },
@@ -56,22 +56,37 @@ const normalizeLegendItems = (items) => {
       Object.assign(itemObj, item);
     }
 
-    if (!Array.isArray(itemObj.value)) {
+    if (!Array.isArray(itemObj.value) && typeof itemObj.value === "number") {
+      itemObj.label = itemObj.label ?? `≤ ${itemObj.value}`;
       itemObj.range = [lastValue, itemObj.value];
+    } else if (typeof itemObj.value === "string") {
+      itemObj.label = itemObj.label ?? itemObj.value;
+      itemObj.categories = itemObj.value.split(",").map(i => i.trim());
+    }
+
+    if (itemObj.range) {
+      lastValue = itemObj.range[1];
     }
 
     result.push(itemObj);
-
-    lastValue = itemObj.range[1];
   }
 
   return result;
 };
-const inRange = (value, range) => value > range[0] && value <= range[1];
+const legendItemMatches = (value, legendItem) => {
+  if (legendItem.range) {
+    return value > legendItem.range[0] && value <= legendItem.range[1];
+  } else if (legendItem.categories) {
+    return legendItem.categories.includes(value);
+  } else {
+    // coerce values if needed
+    return value == legendItem.value;
+  }
+}
 const viewStyle = (viewConfig, layerConfig) => (f) => {
   const value = f.properties[viewConfig.attribute];
   const legendItems = normalizeLegendItems(viewConfig.legend.items);
-  const legendItem = legendItems.find((i) => inRange(value, i.range));
+  const legendItem = legendItems.find((i) => legendItemMatches(value, i));
   const legendItemStyle = legendItem?.style ?? {};
 
   return {
@@ -196,7 +211,7 @@ export default async function init(config) {
         map.fitBounds(lfLayer.getBounds(), {
           paddingBottomRight: [600, 0],
         });
-        console.log(map)
+        console.log(map);
       }
     }
   };
@@ -263,9 +278,7 @@ export default async function init(config) {
     const viewConfig = getViewConfig(mapState.currentView);
     const layerConfig = getLayerConfig(viewConfig.layer);
 
-    layersByName[viewConfig.layer].setStyle(
-      viewStyle(viewConfig, layerConfig)
-    );
+    layersByName[viewConfig.layer].setStyle(viewStyle(viewConfig, layerConfig));
 
     if (controlsByName["legend"]) {
       // TODO find a better way to get and store the state of the legend
@@ -304,7 +317,9 @@ export default async function init(config) {
         subitemsHtmlLines.push(`
           <li class="view-item">
             <label>
-              <input type="radio" name="view_${viewSubitem.layer}" value="${viewSubitem.attribute}" ${mapState.currentView === viewSubitem.attribute ? 'checked' : ''}>
+              <input type="radio" name="view_${viewSubitem.layer}" value="${
+          viewSubitem.attribute
+        }" ${mapState.currentView === viewSubitem.attribute ? "checked" : ""}>
               ${viewSubitem.label}
             </label>
           </li>
