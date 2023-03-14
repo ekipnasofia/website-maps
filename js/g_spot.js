@@ -463,6 +463,10 @@ export default async function init(config) {
 
     layersByName[layerConfig.name] = lfLayer;
   }
+
+  if (config.sidebar.initialPanel) {
+    lfSidebarControl.open(config.sidebar.initialPanel);
+  }
 }
 
 function addDistrictNameToQuestionnaireHeader(districtName) {
