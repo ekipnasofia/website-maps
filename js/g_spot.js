@@ -441,12 +441,11 @@ export default async function init(config) {
 
         appendSelectOptions(elSelect, options);
 
-        // I am ashamed I have to use `setTimeout`, but it works...
-        setTimeout(() => {
+        if (mapState.filterValue) {
           elSelect.value = mapState.filterValue;
           elSelect.dispatchEvent(new Event("input", { bubbles: true }));
           elSelect.dispatchEvent(new Event("change", { bubbles: true }));
-        });
+        }
       }
     } else {
       throw new Error("Unknown layer type: " + layerConfig.type);
