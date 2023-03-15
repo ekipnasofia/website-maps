@@ -247,25 +247,27 @@ class ChartManager {
       predimstvaLabels
     );
 
+    const sortedScoresPercentages = percentageArray(sortedScores);
+
     renderExtendedBarChart({
       chartContainerElement: this._createChartGroupElement(
         questionName,
         chartLabel
       ),
       labels: sortedLabels,
-      data: sortedScores,
+      data: sortedScoresPercentages,
       barsColorSpectrum: {
         maxNumber: sortedScores.reduce(function (accumulator, currentValue) {
           return accumulator + currentValue;
         }, 0),
-        startColor: [235, 250, 239],
-        endColor: [0, 234, 255],
+        startColor: [197, 221, 240],
+        endColor: [10, 147, 255],
       },
       additionalOptions: {
         tooltip: {
           theme: "dark",
           custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-            return `<div id="chart-tooltip-percentage">избрали: ${series[seriesIndex][dataPointIndex]}</div>`;
+            return `<div id="chart-tooltip-percentage">избрали: ${series[seriesIndex][dataPointIndex]}%</div>`;
           },
         },
       },
@@ -287,8 +289,16 @@ class ChartManager {
             borderWidth: 1,
           },
           formatter: function (val, opt) {
-            return opt.w.globals.labels[opt.dataPointIndex];
+            let label = opt.w.globals.labels[opt.dataPointIndex];
+
+            label[label.length - 1] += `: ${val}%`;
+
+            if (window.innerWidth < 500) {
+              label = splitString(label.join(" "), 40);
+            }
+            return label;
           },
+          offsetY: window.innerWidth < 500 && -5,
         },
       },
     });
@@ -309,13 +319,15 @@ class ChartManager {
       predimstvaLabels
     );
 
+    const sortedScoresPercentages = percentageArray(sortedScores);
+
     renderExtendedBarChart({
       chartContainerElement: this._createChartGroupElement(
         questionName,
         chartLabel
       ),
       labels: sortedLabels,
-      data: sortedScores,
+      data: sortedScoresPercentages,
       barsColorSpectrum: {
         maxNumber: sortedScores.reduce(function (accumulator, currentValue) {
           return accumulator + currentValue;
@@ -327,7 +339,7 @@ class ChartManager {
         tooltip: {
           theme: "dark",
           custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-            return `<div id="chart-tooltip-percentage">избрали: ${series[seriesIndex][dataPointIndex]}</div>`;
+            return `<div id="chart-tooltip-percentage">избрали: ${series[seriesIndex][dataPointIndex]}%</div>`;
           },
         },
       },
@@ -349,8 +361,16 @@ class ChartManager {
             borderWidth: 1,
           },
           formatter: function (val, opt) {
-            return opt.w.globals.labels[opt.dataPointIndex];
+            let label = opt.w.globals.labels[opt.dataPointIndex];
+
+            label[label.length - 1] += `: ${val}%`;
+
+            if (window.innerWidth < 500) {
+              label = splitString(label.join(" "), 40);
+            }
+            return label;
           },
+          offsetY: window.innerWidth < 500 && -5,
         },
       },
     });
