@@ -1,3 +1,65 @@
+@font-face {
+  font-family: "SofiaSans";
+  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Black.woff2")
+    format("opentype");
+  font-weight: 900;
+}
+@font-face {
+  font-family: "SofiaSans";
+  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-ExtraBold.woff2")
+    format("opentype");
+  font-weight: 800;
+}
+@font-face {
+  font-family: "SofiaSans";
+  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Bold.woff2")
+    format("opentype");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "SofiaSans";
+  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-SemiBold.woff2")
+    format("opentype");
+  font-weight: 600;
+}
+@font-face {
+  font-family: "SofiaSans";
+  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Medium.woff2")
+    format("opentype");
+  font-weight: 500;
+}
+@font-face {
+  font-family: "SofiaSans";
+  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Regular.woff2")
+    format("opentype");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "SofiaSans";
+  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Light.woff2")
+    format("opentype");
+  font-weight: 300;
+}
+@font-face {
+  font-family: "SofiaSans";
+  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-ExtraLight.woff2")
+    format("opentype");
+  font-weight: 200;
+}
+@font-face {
+  font-family: "SofiaSans";
+  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-HairLine.woff2")
+    format("opentype");
+  font-weight: 100;
+}
+
+@font-face {
+  font-family: "SofiaSans";
+  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Regular.woff2")
+    format("opentype");
+  font-weight: 400;
+}
+
 :root {
   --map-sidebar-width-xl: 40vw;
   --map-sidebar-width-l: 400px;
@@ -9,6 +71,7 @@
 body {
   padding: 0;
   margin: 0;
+  font-family: "SofiaSans", sans-serif !important;
 }
 
 * {
@@ -128,7 +191,6 @@ body {
 
 .chart-group {
   padding: 1rem 0;
-  font-family: sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -181,7 +243,6 @@ body {
 }
 
 .view .view-items {
-  font-family: sans-serif;
 }
 
 .view .view-item b {
