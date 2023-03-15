@@ -1,62 +1,62 @@
 @font-face {
-  font-family: "SofiaSans";
-  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Black.woff2")
-    format("opentype");
+  font-family: 'SofiaSans';
+  src: url('https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Black.woff2')
+    format('opentype');
   font-weight: 900;
 }
 @font-face {
-  font-family: "SofiaSans";
-  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-ExtraBold.woff2")
-    format("opentype");
+  font-family: 'SofiaSans';
+  src: url('https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-ExtraBold.woff2')
+    format('opentype');
   font-weight: 800;
 }
 @font-face {
-  font-family: "SofiaSans";
-  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Bold.woff2")
-    format("opentype");
+  font-family: 'SofiaSans';
+  src: url('https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Bold.woff2')
+    format('opentype');
   font-weight: 700;
 }
 @font-face {
-  font-family: "SofiaSans";
-  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-SemiBold.woff2")
-    format("opentype");
+  font-family: 'SofiaSans';
+  src: url('https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-SemiBold.woff2')
+    format('opentype');
   font-weight: 600;
 }
 @font-face {
-  font-family: "SofiaSans";
-  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Medium.woff2")
-    format("opentype");
+  font-family: 'SofiaSans';
+  src: url('https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Medium.woff2')
+    format('opentype');
   font-weight: 500;
 }
 @font-face {
-  font-family: "SofiaSans";
-  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Regular.woff2")
-    format("opentype");
+  font-family: 'SofiaSans';
+  src: url('https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Regular.woff2')
+    format('opentype');
   font-weight: 400;
 }
 @font-face {
-  font-family: "SofiaSans";
-  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Light.woff2")
-    format("opentype");
+  font-family: 'SofiaSans';
+  src: url('https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Light.woff2')
+    format('opentype');
   font-weight: 300;
 }
 @font-face {
-  font-family: "SofiaSans";
-  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-ExtraLight.woff2")
-    format("opentype");
+  font-family: 'SofiaSans';
+  src: url('https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-ExtraLight.woff2')
+    format('opentype');
   font-weight: 200;
 }
 @font-face {
-  font-family: "SofiaSans";
-  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-HairLine.woff2")
-    format("opentype");
+  font-family: 'SofiaSans';
+  src: url('https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-HairLine.woff2')
+    format('opentype');
   font-weight: 100;
 }
 
 @font-face {
-  font-family: "SofiaSans";
-  src: url("https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Regular.woff2")
-    format("opentype");
+  font-family: 'SofiaSans';
+  src: url('https://ekipnasofia.bg/wp-content/themes/constructions-agency02/assets/fonts/SofiaSans-Regular.woff2')
+    format('opentype');
   font-weight: 400;
 }
 
@@ -71,7 +71,7 @@
 body {
   padding: 0;
   margin: 0;
-  font-family: "SofiaSans", sans-serif !important;
+  font-family: 'SofiaSans', sans-serif !important;
 }
 
 * {
@@ -217,6 +217,13 @@ body {
   .sidebar-tabs {
     right: 0;
   }
+
+  .chart-group-chart {
+    display: flex !important;
+    width: 100% !important;
+    padding: 0;
+    justify-content: center;
+  }
 }
 
 @media (min-width: 768px) {
@@ -256,7 +263,8 @@ body {
   padding-right: 0;
 }
 
-.view button {
+.view button,
+.chart_description button {
   color: white;
   background-color: #0074d9;
   text-transform: uppercase;
@@ -267,6 +275,20 @@ body {
   width: 100%;
   border: 1px solid darkblue;
   cursor: pointer;
+}
+
+#charts-missing-region-message {
+  text-align: center;
+  font-family: sans-serif;
+  color: red;
+  padding: 1rem;
+}
+
+#questionnaire-district-info {
+  margin-top: 2rem;
+  padding: 0;
+  text-align: center;
+  font-family: sans-serif;
 }
 
 #map .legend .header {
@@ -323,7 +345,7 @@ body {
 }
 .pie-chart span:after {
   display: inline-block;
-  content: "";
+  content: '';
   width: 0.8em;
   height: 0.8em;
   margin-left: 0.4em;

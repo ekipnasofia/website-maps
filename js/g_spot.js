@@ -61,7 +61,7 @@ const normalizeLegendItems = (items) => {
       itemObj.range = [lastValue, itemObj.value];
     } else if (typeof itemObj.value === "string") {
       itemObj.label = itemObj.label ?? itemObj.value;
-      itemObj.categories = itemObj.value.split(",").map(i => i.trim());
+      itemObj.categories = itemObj.value.split(",").map((i) => i.trim());
     }
 
     if (itemObj.range) {
@@ -82,7 +82,7 @@ const legendItemMatches = (value, legendItem) => {
     // coerce values if needed
     return value == legendItem.value;
   }
-}
+};
 const viewStyle = (viewConfig, layerConfig) => (f) => {
   const value = f.properties[viewConfig.attribute];
   const legendItems = normalizeLegendItems(viewConfig.legend.items);
@@ -268,7 +268,12 @@ export default async function init(config) {
         }
       }
 
-      showStats(featureLayer.feature);
+      if (featureLayer) {
+        showStats(featureLayer.feature);
+      } else {
+        lfSidebarControl.open("views");
+        cleanStats();
+      }
     });
 
     return div;
@@ -359,16 +364,45 @@ export default async function init(config) {
     return div;
   };
 
+  const addBaseChartsContainer = () => {
+    addMissingRegionMessageToStatsPanel();
+
+    const div = L.DomUtil.create("div", "chart_description");
+    L.DomEvent.disableClickPropagation(div);
+    L.DomEvent.disableScrollPropagation(div);
+
+    div.innerHTML = config.charts.description || "";
+
+    div.querySelectorAll("[data-panel-tab]").forEach((btn) => {
+      btn.addEventListener("click", (event) => {
+        lfSidebarControl.open(btn.dataset.panelTab);
+      });
+    });
+
+    return div;
+  };
+
   const showStats = (feature) => {
-    chartManager.renderCharts(feature.properties);
     lfSidebarControl.open("stats");
-    addDistrictNameToQuestionnaireHeader(feature.properties["obns_cyr"]);
+    chartManager.renderCharts(feature.properties);
+    addDistrictInfoToQuestionnaireHeader({
+      districtName: feature.properties["obns_cyr"],
+      numberOfParticipants: feature.properties.q_total_count,
+    });
   };
   const hideStats = () => {
     lfSidebarControl.close();
   };
 
+  const cleanStats = () => {
+    chartManager.refreshChartSpace();
+    addMissingRegionMessageToStatsPanel();
+  };
+
   document.querySelector("#views").appendChild(addViews());
+  document
+    .querySelector("#charts_header")
+    .appendChild(addBaseChartsContainer());
 
   // parallelize loading of geojson data
   await Promise.all(
@@ -497,10 +531,27 @@ export default async function init(config) {
   }
 }
 
-function addDistrictNameToQuestionnaireHeader(districtName) {
-  if (document.getElementById("stats").classList.contains("active")) {
-    document.getElementById(
-      "questionnaire-district-name"
-    ).innerHTML = `- р-н ${districtName}`;
-  }
+function addDistrictInfoToQuestionnaireHeader({
+  districtName,
+  numberOfParticipants,
+}) {
+  const template = `<p>
+                <h2 id="questionnaire-district-info">
+                    р-н {{districtName}} ({{numberOfParticipants}} попълнили)
+                </h2>
+              </p>`;
+
+  const div = document.createElement("div");
+  div.innerHTML = Mustache.render(template, {
+    districtName,
+    numberOfParticipants,
+  });
+
+  const chartsContainer = document.getElementById("charts_container");
+  chartsContainer.insertBefore(div, chartsContainer.firstChild);
+}
+
+function addMissingRegionMessageToStatsPanel() {
+  document.getElementById("charts_container").innerHTML =
+    "<p><h3 id='charts-missing-region-message'>Моля, изберете район от картата.</h3></p>";
 }

@@ -19,7 +19,7 @@ class ChartManager {
   }
 
   renderCharts = (data) => {
-    this._refreshChartSpace();
+    this.refreshChartSpace();
     this.render_q2(data);
     this.render_q3(data);
     this.render_q4(data);
@@ -27,6 +27,7 @@ class ChartManager {
     this.render_q9(data);
     this.render_q10(data);
     this.render_q5(data);
+    this.render_q6(data);
     this.render_q7(data);
     this.render_q12(data);
   };
@@ -47,13 +48,16 @@ class ChartManager {
           type: "pie",
           height: "400px",
         },
+        legend: {
+          position: "bottom",
+        },
         labels: questionData.answerLabels,
         responsive: [
           {
             breakpoint: 400,
             options: {
               chart: {
-                width: 300,
+                width: 200,
               },
               legend: {
                 position: "bottom",
@@ -124,6 +128,21 @@ class ChartManager {
       ),
       chartColor: chartColours[2],
       ...questionData,
+      additionalResponsiveness: [
+        {
+          breakpoint: "400",
+          options: {
+            xaxis: {
+              labels: {
+                rotate: -45,
+                style: {
+                  fontSize: "8.5px",
+                },
+              },
+            },
+          },
+        },
+      ],
     });
   };
 
@@ -140,6 +159,21 @@ class ChartManager {
       ),
       chartColor: chartColours[3],
       ...questionData,
+      additionalResponsiveness: [
+        {
+          breakpoint: "400",
+          options: {
+            xaxis: {
+              labels: {
+                rotate: -45,
+                style: {
+                  fontSize: "8px",
+                },
+              },
+            },
+          },
+        },
+      ],
     });
   };
 
@@ -198,12 +232,134 @@ class ChartManager {
     ).render();
   };
 
-  render_q5 = (data) => {};
+  render_q5 = (data) => {
+    const questionName = "q5";
+    const { label: chartLabel, options: predimstvaLabels } =
+      questions[questionName];
+
+    let predimstvaScores = data["q5_uniq_count_obj"];
+    if (!predimstvaScores) {
+      return;
+    }
+
+    const { sortedLabels, sortedScores } = mapQ5Q6DescendingScoresToLabels(
+      predimstvaScores,
+      predimstvaLabels
+    );
+
+    renderExtendedBarChart({
+      chartContainerElement: this._createChartGroupElement(
+        questionName,
+        chartLabel
+      ),
+      labels: sortedLabels,
+      data: sortedScores,
+      barsColorSpectrum: {
+        maxNumber: sortedScores.reduce(function (accumulator, currentValue) {
+          return accumulator + currentValue;
+        }, 0),
+        startColor: [235, 250, 239],
+        endColor: [0, 234, 255],
+      },
+      additionalOptions: {
+        tooltip: {
+          theme: "dark",
+          custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+            return `<div id="chart-tooltip-percentage">избрали: ${series[seriesIndex][dataPointIndex]}</div>`;
+          },
+        },
+      },
+      additionalResponsiveness: {
+        chart: {
+          type: "bar",
+          height: "600px",
+          toolbar: {
+            show: false,
+          },
+        },
+        dataLabels: {
+          enabled: true,
+          textAnchor: "start",
+          style: {
+            colors: ["black"],
+            left: 2,
+            borderColor: "#000",
+            borderWidth: 1,
+          },
+          formatter: function (val, opt) {
+            return opt.w.globals.labels[opt.dataPointIndex];
+          },
+        },
+      },
+    });
+  };
+
+  render_q6 = (data) => {
+    const questionName = "q6";
+    const { label: chartLabel, options: predimstvaLabels } =
+      questions[questionName];
+
+    let predimstvaScores = data["q5_uniq_count_obj"];
+    if (!predimstvaScores) {
+      return;
+    }
+
+    const { sortedLabels, sortedScores } = mapQ5Q6DescendingScoresToLabels(
+      predimstvaScores,
+      predimstvaLabels
+    );
+
+    renderExtendedBarChart({
+      chartContainerElement: this._createChartGroupElement(
+        questionName,
+        chartLabel
+      ),
+      labels: sortedLabels,
+      data: sortedScores,
+      barsColorSpectrum: {
+        maxNumber: sortedScores.reduce(function (accumulator, currentValue) {
+          return accumulator + currentValue;
+        }, 0),
+        startColor: [235, 250, 239],
+        endColor: [255, 106, 77],
+      },
+      additionalOptions: {
+        tooltip: {
+          theme: "dark",
+          custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+            return `<div id="chart-tooltip-percentage">избрали: ${series[seriesIndex][dataPointIndex]}</div>`;
+          },
+        },
+      },
+      additionalResponsiveness: {
+        chart: {
+          type: "bar",
+          height: "200px",
+          toolbar: {
+            show: false,
+          },
+        },
+        dataLabels: {
+          enabled: true,
+          textAnchor: "start",
+          style: {
+            colors: ["black"],
+            left: 2,
+            borderColor: "#000",
+            borderWidth: 1,
+          },
+          formatter: function (val, opt) {
+            return opt.w.globals.labels[opt.dataPointIndex];
+          },
+        },
+      },
+    });
+  };
 
   render_q7 = (data) => {
     const questionName = "q7";
-
     const { label: chartLabel, subQuestions } = questions[questionName];
+
     const answerData = Object.keys(data)
       .filter((key) => key.startsWith(questionName) && key.includes("avg"))
       .sort((a, b) => {
@@ -222,131 +378,27 @@ class ChartManager {
       answerData
     );
 
-    let responsivenessOptions = {};
-    if (window.innerWidth > 550) {
-      responsivenessOptions = {
-        chart: {
-          type: "bar",
-          height: "1400px",
-          toolbar: {
-            show: false,
-          },
-        },
-        plotOptions: {
-          bar: {
-            barHeight: "90%",
-            horizontal: true,
-            dataLabels: {
-              position: "bottom",
-            },
-          },
-        },
-        dataLabels: {
-          enabled: true,
-          textAnchor: "start",
-          style: {
-            colors: ["black"],
-            left: 2,
-            borderColor: "#000",
-            borderWidth: 1,
-          },
-          formatter: function (val, opt) {
-            const label = opt.w.globals.labels[opt.dataPointIndex];
-            return label;
-          },
-          offsetY: -8,
-        },
-        xaxis: {
-          categories: Object.keys(priorityImportanceObject).map((label) =>
-            splitString(label, 60)
-          ),
-          labels: {
-            rotate: 0,
-          },
-        },
-      };
-    } else {
-      responsivenessOptions = {
-        chart: {
-          type: "bar",
-          height: "1700px",
-          toolbar: {
-            show: false,
-          },
-        },
-        plotOptions: {
-          bar: {
-            barHeight: "95%",
-            horizontal: true,
-            dataLabels: {
-              position: "bottom",
-            },
-          },
-        },
-        dataLabels: {
-          enabled: true,
-          textAnchor: "start",
-          style: {
-            colors: ["black"],
-            left: 2,
-            borderColor: "#000",
-            borderWidth: 1,
-          },
-          formatter: function (val, opt) {
-            const label = opt.w.globals.labels[opt.dataPointIndex];
-            return [...label.slice(0, -1), label[label.length - 1]];
-          },
-          offsetY: -15,
-        },
-        xaxis: {
-          categories: Object.keys(priorityImportanceObject).map((label) =>
-            splitString(label, 33)
-          ),
-          labels: {
-            rotate: 0,
-          },
-        },
-      };
-    }
-
-    new ApexCharts(this._createChartGroupElement(questionName, chartLabel), {
-      series: [
-        {
-          data: Object.values(priorityImportanceObject),
-        },
-      ],
-      fill: {
-        colors: [
-          function ({ value, seriesIndex, w }) {
-            const maxNum = 6;
-            const startColor = [74, 74, 74];
-            const endColor = [189, 245, 47];
-            const r = Math.round(
-              ((endColor[0] - startColor[0]) / maxNum) * value + startColor[0]
-            );
-            const g = Math.round(
-              ((endColor[1] - startColor[1]) / maxNum) * value + startColor[1]
-            );
-            const b = Math.round(
-              ((endColor[2] - startColor[2]) / maxNum) * value + startColor[2]
-            );
-            return `rgb(${r}, ${g}, ${b})`;
-          },
-        ],
+    renderExtendedBarChart({
+      chartContainerElement: this._createChartGroupElement(
+        questionName,
+        chartLabel
+      ),
+      labels: Object.keys(priorityImportanceObject),
+      data: Object.values(priorityImportanceObject),
+      barsColorSpectrum: {
+        maxNumber: 6,
+        startColor: [209, 255, 235],
+        endColor: [0, 255, 145],
       },
-      yaxis: {
-        labels: {
-          show: false,
+      additionalOptions: {
+        tooltip: {
+          theme: "dark",
+          custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+            return `<div id="chart-tooltip-percentage">${series[seriesIndex][dataPointIndex]} / 6</div>`;
+          },
         },
       },
-      tooltip: {
-        theme: "dark",
-        custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-          return `<div id="chart-tooltip-percentage">${series[seriesIndex][dataPointIndex]} / 6</div>`;
-        },
-      },
-      ...responsivenessOptions,
-    }).render();
+    });
   };
 
   render_q8 = (data) => {
@@ -508,7 +560,7 @@ class ChartManager {
     ).render();
   };
 
-  _refreshChartSpace = () => {
+  refreshChartSpace = () => {
     while (this.chartsContainer.firstChild) {
       this.chartsContainer.removeChild(this.chartsContainer.firstChild);
     }
@@ -539,35 +591,6 @@ class ChartManager {
 
 export default new ChartManager();
 
-/* 
-
-Question data utils 
-
-*/
-const getAnswerDataAsArray = (data, questionName) => {
-  return Object.keys(data)
-    .filter((key) => key.startsWith(questionName) && key.includes("count"))
-    .sort((a, b) => {
-      const idA = a.split("_")[1];
-      const idB = b.split("_")[1];
-      return idA.localeCompare(idB);
-    })
-    .map((key) => data[key]);
-};
-
-const getQuestionData = (data, questionName) => {
-  const answerData = getAnswerDataAsArray(data, questionName);
-
-  if (answerData.every((value) => value == null)) {
-    return false;
-  }
-
-  let { label: chartLabel, options: answerLabels } = questions[questionName];
-
-  answerLabels = Object.values(answerLabels);
-  return { chartLabel, answerLabels, answerData };
-};
-
 /*  
 
 Chart utils
@@ -580,10 +603,13 @@ function renderBarChart({
   answerLabels,
   chartColor,
   additionalOptions,
+  additionalResponsiveness,
 }) {
   if (!additionalOptions) {
     additionalOptions = {};
   }
+
+  additionalResponsiveness = additionalResponsiveness || [];
 
   new ApexCharts(chartGroupElement, {
     dataLabels: {
@@ -622,16 +648,178 @@ function renderBarChart({
           xaxis: {
             labels: {
               style: {
-                fontSize: "9px",
+                fontSize: 9,
               },
             },
           },
         },
       },
+      ...additionalResponsiveness,
     ],
     ...additionalOptions,
   }).render();
 }
+
+function renderExtendedBarChart({
+  chartContainerElement,
+  labels,
+  data,
+  barsColorSpectrum,
+  additionalOptions,
+  additionalResponsiveness,
+}) {
+  let responsivenessOptions = {};
+  if (window.innerWidth > 550) {
+    responsivenessOptions = {
+      chart: {
+        type: "bar",
+        height: "1400px",
+        toolbar: {
+          show: false,
+        },
+      },
+      plotOptions: {
+        bar: {
+          barHeight: "90%",
+          horizontal: true,
+          dataLabels: {
+            position: "bottom",
+          },
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        textAnchor: "start",
+        style: {
+          colors: ["black"],
+          left: 2,
+          borderColor: "#000",
+          borderWidth: 1,
+        },
+        formatter: function (val, opt) {
+          return opt.w.globals.labels[opt.dataPointIndex];
+        },
+        offsetY: -8,
+      },
+      xaxis: {
+        categories: labels.map((label) => splitString(label, 60)),
+        labels: {
+          rotate: 0,
+        },
+      },
+    };
+  } else {
+    responsivenessOptions = {
+      chart: {
+        type: "bar",
+        height: "1700px",
+        toolbar: {
+          show: false,
+        },
+      },
+      plotOptions: {
+        bar: {
+          barHeight: "95%",
+          horizontal: true,
+          dataLabels: {
+            position: "bottom",
+          },
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        textAnchor: "start",
+        style: {
+          colors: ["black"],
+          left: 2,
+          borderColor: "#000",
+          borderWidth: 1,
+        },
+        formatter: function (val, opt) {
+          return opt.w.globals.labels[opt.dataPointIndex];
+        },
+        offsetY: -15,
+      },
+      xaxis: {
+        categories: labels.map((label) => splitString(label, 30)),
+        labels: {
+          rotate: 0,
+        },
+      },
+    };
+  }
+
+  if (additionalResponsiveness) {
+    responsivenessOptions = {
+      ...responsivenessOptions,
+      ...additionalResponsiveness,
+    };
+  }
+
+  new ApexCharts(chartContainerElement, {
+    series: [
+      {
+        data: data,
+      },
+    ],
+    yaxis: {
+      labels: {
+        show: false,
+      },
+    },
+    fill: {
+      colors: [
+        function ({ value, seriesIndex, w }) {
+          return customColorRange({ ...barsColorSpectrum, value });
+        },
+      ],
+    },
+    ...additionalOptions,
+    ...responsivenessOptions,
+  }).render();
+}
+
+function customColorRange({ maxNumber, startColor, endColor, value }) {
+  const r = Math.round(
+    ((endColor[0] - startColor[0]) / maxNumber) * value + startColor[0]
+  );
+  const g = Math.round(
+    ((endColor[1] - startColor[1]) / maxNumber) * value + startColor[1]
+  );
+  const b = Math.round(
+    ((endColor[2] - startColor[2]) / maxNumber) * value + startColor[2]
+  );
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+/* 
+
+Question data utils 
+
+*/
+const getAnswerDataAsArray = (data, questionName) => {
+  return Object.keys(data)
+    .filter((key) => key.startsWith(questionName) && key.includes("count"))
+    .sort((a, b) => {
+      const idA = a.split("_")[1];
+      const idB = b.split("_")[1];
+      return idA.localeCompare(idB);
+    })
+    .map((key) => data[key]);
+};
+
+const getQuestionData = (data, questionName) => {
+  const answerData = getAnswerDataAsArray(data, questionName);
+
+  if (answerData.every((value) => value == null)) {
+    return false;
+  }
+
+  let { label: chartLabel, options: answerLabels } = questions[questionName];
+
+  answerLabels = Object.values(answerLabels);
+  return { chartLabel, answerLabels, answerData };
+};
 
 function splitString(str, maxLength = 13) {
   if (!maxLength) {
@@ -684,4 +872,23 @@ function createDataObjectDescending(labels, values) {
   }
 
   return obj;
+}
+
+// I know this function is bad, but I need it
+function mapQ5Q6DescendingScoresToLabels(indexToScore, indexToLabel) {
+  const labelToScore = {};
+
+  for (const index in indexToScore) {
+    if (indexToLabel.hasOwnProperty(index)) {
+      labelToScore[indexToLabel[index]] = indexToScore[index];
+    }
+  }
+
+  const sortedEntries = Object.entries(labelToScore).sort(
+    (a, b) => b[1] - a[1]
+  );
+  const sortedLabels = sortedEntries.map((entry) => entry[0]);
+  const sortedScores = sortedEntries.map((entry) => entry[1]);
+
+  return { sortedLabels, sortedScores };
 }
