@@ -208,8 +208,11 @@ export default async function init(config) {
       lfLayer.addData(geoJson);
 
       if (layerConfig.name == config.filter.boundsLayer) {
+        const sidebarWidth = document.querySelector('#sidebar').offsetWidth;
+        const paddingRight = Math.abs(window.innerWidth - sidebarWidth) < 100 ? 0 : sidebarWidth;
+
         map.fitBounds(lfLayer.getBounds(), {
-          paddingBottomRight: [600, 0],
+          paddingBottomRight: [paddingRight, 0],
         });
       }
     }
