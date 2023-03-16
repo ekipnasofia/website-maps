@@ -529,6 +529,9 @@ export default async function init(config) {
     elSelect.dispatchEvent(new Event("input", { bubbles: true }));
     elSelect.dispatchEvent(new Event("change", { bubbles: true }));
   }
+
+  // the no-transition is needed only for the initial load of the map
+  lfSidebarControl._container.parentNode.classList.remove('sidebar-no-transition');
 }
 
 function addDistrictInfoToQuestionnaireHeader({

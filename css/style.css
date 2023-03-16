@@ -122,6 +122,22 @@ body {
 
 /* sidebar stuff  */
 
+@media (min-width: 768px) {
+  .sidebar.sidebar-no-transition {
+    transition: width 0ms;
+  }
+}
+@media (min-width: 768px) {
+  .sidebar-right.sidebar-no-transition ~ .sidebar-map .leaflet-right {
+    transition: right 0ms;
+  }
+}
+@media (min-width: 768px) {
+  .sidebar-left.sidebar-no-transition ~ .sidebar-map .leaflet-left {
+    transition: left 0ms;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 991px) {
   .sidebar {
     width: var(--map-sidebar-width-m);
