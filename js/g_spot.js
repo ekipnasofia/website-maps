@@ -433,26 +433,28 @@ export default async function init(config) {
             fLayer._leaflet_id = `${layerConfig.name}_${fid}`;
           }
 
-          fLayer.on({
-            click: (event) => {
-              const elSelect =
-                lfFilterControl._container.querySelector("select");
-              const f = event.target.feature;
+          if (config.filter.fromLayer === layerConfig.name) {
+            fLayer.on({
+              click: (event) => {
+                const elSelect =
+                  lfFilterControl._container.querySelector("select");
+                const f = event.target.feature;
 
-              elSelect.value = f.properties["id"];
-              elSelect.dispatchEvent(new Event("input", { bubbles: true }));
-              elSelect.dispatchEvent(new Event("change", { bubbles: true }));
-            },
-            popupclose: (_event) => {
-              hideStats();
-              if (layerConfig.styleHighlight) {
-                const viewConfig = mapState.currentView
-                  ? getViewConfig(mapState.currentView)
-                  : null;
-                resetLayerStyle(lfLayer, layerConfig, viewConfig);
-              }
-            },
-          });
+                elSelect.value = f.properties["id"];
+                elSelect.dispatchEvent(new Event("input", { bubbles: true }));
+                elSelect.dispatchEvent(new Event("change", { bubbles: true }));
+              },
+              popupclose: (_event) => {
+                hideStats();
+                if (layerConfig.styleHighlight) {
+                  const viewConfig = mapState.currentView
+                    ? getViewConfig(mapState.currentView)
+                    : null;
+                  resetLayerStyle(lfLayer, layerConfig, viewConfig);
+                }
+              },
+            });
+          }
         },
         // Note: dynamically changing the filter option will have effect only on newly added data. It will not re-evaluate already included features.
         filter: (f) => {
