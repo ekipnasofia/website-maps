@@ -290,8 +290,11 @@ class ChartManager {
           },
           formatter: function (val, opt) {
             let label = opt.w.globals.labels[opt.dataPointIndex];
+            let labelAddition = `: ${val}%`;
 
-            label[label.length - 1] += `: ${val}%`;
+            if (!label[label.length - 1].endsWith(labelAddition)) {
+              label[label.length - 1] += labelAddition;
+            }
 
             if (window.innerWidth < 500) {
               label = splitString(label.join(" "), 40);
@@ -362,8 +365,11 @@ class ChartManager {
           },
           formatter: function (val, opt) {
             let label = opt.w.globals.labels[opt.dataPointIndex];
-
-            label[label.length - 1] += `: ${val}%`;
+            let labelAddition = `: ${val}%`;
+            
+            if (!label[label.length - 1].endsWith(labelAddition)) {
+              label[label.length - 1] += labelAddition;
+            }
 
             if (window.innerWidth < 500) {
               label = splitString(label.join(" "), 40);
