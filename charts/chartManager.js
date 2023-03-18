@@ -312,7 +312,7 @@ class ChartManager {
     const { label: chartLabel, options: predimstvaLabels } =
       questions[questionName];
 
-    let predimstvaScores = data["q5_uniq_count_obj"];
+    let predimstvaScores = data["q6_uniq_count_obj"];
     if (!predimstvaScores) {
       return;
     }
@@ -349,7 +349,7 @@ class ChartManager {
       additionalResponsiveness: {
         chart: {
           type: "bar",
-          height: "200px",
+          height: "600px",
           toolbar: {
             show: false,
           },
