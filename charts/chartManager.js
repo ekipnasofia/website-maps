@@ -391,9 +391,10 @@ class ChartManager {
       .sort((a, b) => {
         const idA = a.split("_")[1];
         const idB = b.split("_")[1];
-        return idA.localeCompare(idB);
+
+        return +idA - +idB;
       })
-      .map((key) => data[key].toFixed(2));
+      .map((key) => +data[key].toFixed(2));
 
     if (!answerData) {
       return;
@@ -891,7 +892,7 @@ function createDataObjectDescending(labels, values) {
     arrOfObj.push({ label: labels[i], value: values[i] });
   }
 
-  arrOfObj.sort((a, b) => b.value - a.value);
+  arrOfObj.sort((a, b) => +b.value - +a.value);
 
   for (let i = 0; i < arrOfObj.length; i++) {
     obj[arrOfObj[i].label] = arrOfObj[i].value;
