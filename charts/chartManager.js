@@ -247,7 +247,7 @@ class ChartManager {
       predimstvaLabels
     );
 
-    const sortedScoresPercentages = percentageArray(sortedScores);
+    const sortedScoresPercentages = percentageArray(sortedScores, data["q5_total_count"]);
 
     renderExtendedBarChart({
       chartContainerElement: this._createChartGroupElement(
@@ -322,7 +322,7 @@ class ChartManager {
       predimstvaLabels
     );
 
-    const sortedScoresPercentages = percentageArray(sortedScores);
+    const sortedScoresPercentages = percentageArray(sortedScores, data["q6_total_count"]);
 
     renderExtendedBarChart({
       chartContainerElement: this._createChartGroupElement(
@@ -879,8 +879,11 @@ function splitString(str, maxLength = 13) {
   return result;
 }
 
-function percentageArray(arr) {
-  const sum = arr.reduce((total, value) => total + value, 0);
+function percentageArray(arr, sum) {
+  if (sum == null) {
+    sum = arr.reduce((total, value) => total + value, 0);
+  }
+
   return arr.map((value) => ((value / sum) * 100).toFixed(2));
 }
 
