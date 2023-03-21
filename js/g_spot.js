@@ -502,7 +502,7 @@ export default async function init(config) {
         const options = geojson.features.map((f) => ({
           label: f.properties[config.filter.labelAttribute],
           value: f.properties[config.filter.valueAttribute],
-        }));
+        })).sort((a, b) => a.label.localeCompare(b.label));
         const elSelect = lfFilterControl._container.querySelector("select");
 
         appendSelectOptions(elSelect, options);
