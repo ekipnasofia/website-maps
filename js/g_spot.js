@@ -172,6 +172,7 @@ export default async function init(config) {
   const url = new URL(window.location.href);
 
   const mapState = {
+    initialRun: true,
     legendCollapsed: false,
     filterValue: url.searchParams.get("filter"),
     currentView: config.views.selectedView ?? null,
@@ -210,10 +211,15 @@ export default async function init(config) {
       if (layerConfig.name == config.filter.boundsLayer) {
         const sidebarWidth = document.querySelector('#sidebar').offsetWidth;
         const paddingRight = Math.abs(window.innerWidth - sidebarWidth) < 100 ? 0 : sidebarWidth;
+        const timeoutMs = mapState.initialRun ? 1000 : 0;
 
-        map.fitBounds(lfLayer.getBounds(), {
-          paddingBottomRight: [paddingRight, 0],
-        });
+        mapState.initialRun = false;
+
+        setTimeout(() => {
+          map.fitBounds(lfLayer.getBounds(), {
+            paddingBottomRight: [paddingRight, 0],
+          });
+        }, timeoutMs);
       }
     }
   };
@@ -534,6 +540,8 @@ export default async function init(config) {
 
   // the no-transition is needed only for the initial load of the map
   lfSidebarControl._container.parentNode.classList.remove('sidebar-no-transition');
+
+  mapState.initialRun = false;
 }
 
 function addDistrictInfoToQuestionnaireHeader({
